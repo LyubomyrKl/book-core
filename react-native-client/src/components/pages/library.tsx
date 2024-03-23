@@ -11,9 +11,8 @@ const Library = ({navigation}: any) => {
             <View style={library.libraryContainer}>
                 <Container>
                     <Quote/>
+                    <BookItem progress={3} isRecentlyRead/>
                 </Container>
-
-                <BookItem/>
             </View>
         );
 };

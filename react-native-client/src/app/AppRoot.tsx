@@ -6,6 +6,7 @@ import {createStackNavigator} from "@react-navigation/stack";
 import Octicons from 'react-native-vector-icons/Octicons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { View, TouchableOpacity, Animated } from 'react-native';
+import {colors} from "../consts";
 const AppStack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -34,8 +35,8 @@ const Tabs = () => {
                     // You can return any component that you like here!
                     return <Octicons name={iconName} size={size} color={color} />;
                 },
-                tabBarActiveTintColor: '#2980b9',
-                tabBarInactiveTintColor: 'gray',
+                tabBarActiveTintColor: colors.textPurpleBlue,
+                tabBarInactiveTintColor: colors.textGrey,
             })}
         >
             <Tab.Screen name="Library" options={{headerShown: false}} component={Library} />

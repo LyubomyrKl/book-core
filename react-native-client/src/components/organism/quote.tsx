@@ -2,6 +2,7 @@ import React from 'react';
 import Svg, { Path, Circle, Rect, G} from 'react-native-svg';
 
 import {Text, StyleSheet, View} from "react-native";
+import {colors} from "../../consts";
 
 const Quote = () => {
     return (
@@ -51,6 +52,7 @@ const Quote = () => {
 const quote = StyleSheet.create({
     quoteBox: {
         marginTop: 20,
+        marginBottom: 40,
         position: 'relative',
         paddingTop: 25,
         paddingBottom: 15,
@@ -61,13 +63,12 @@ const quote = StyleSheet.create({
     quote: {
         fontWeight: 'semibold',
         fontSize: 17,
-
     },
     author: {
         fontWeight: 'semibold',
         paddingVertical: 8,
         textAlign: 'right',
-        color: '#838383'
+        color: colors.textGrey,
     },
     svg: {
         position: 'absolute',
