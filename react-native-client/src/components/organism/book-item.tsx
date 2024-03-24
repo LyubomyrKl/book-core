@@ -3,7 +3,7 @@ import { View, Text, StyleSheet} from "react-native";
 import {colors} from "../../consts";
 import AppButton from "../atoms/button";
 import BookCover from "../molecules/book-cover";
-import {LinearGradient} from "expo-linear-gradient";
+
 
 
 export interface IBookDetail {
@@ -30,7 +30,7 @@ const BookItem: React.FC<IBookItemProps> = ({onButtonPress, bookDetail, isMostRe
 
     return (
         <View style={styles.bookItemBox} onPress>
-            <View style={styles.bookItemImageBoxStyle}>
+            <View style={[styles.bookItemImageBoxStyle]}>
                 <BookCover uri={bookDetail.cover}/>
             </View>
             <View style={styles.descriptionBox}>
@@ -65,9 +65,11 @@ const styles = StyleSheet.create({
         width: '100%',
         aspectRatio: 2,
     },
+
     bookItemImageBoxStyle:  {
         marginRight: 20,
         width: '35%',
+
     },
 
     descriptionBox: {
@@ -99,7 +101,6 @@ const styles = StyleSheet.create({
     progressBarBox: {
         display: 'flex',
         flexDirection: 'row',
-
     },
 
     progressBar: {

@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {View, StyleSheet, Dimensions, Touchable, TouchableWithoutFeedback} from "react-native";
+import {View, StyleSheet, Dimensions, TouchableWithoutFeedback} from "react-native";
 import BookItem, {IBookDetail} from "../organism/book-item";
 
 

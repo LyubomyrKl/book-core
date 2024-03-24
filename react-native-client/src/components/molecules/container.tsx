@@ -1,7 +1,6 @@
 import React from 'react';
 import {View, StyleSheet} from "react-native";
 
-
 const Container: React.FC = (props) => {
     return (
         <View style={container.container}>
@@ -10,10 +9,8 @@ const Container: React.FC = (props) => {
     );
 };
 
-
 const container = StyleSheet.create({
     container: {
-
         paddingVertical: 20,
         paddingHorizontal: 20,
     }
