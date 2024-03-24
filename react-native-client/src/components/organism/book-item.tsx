@@ -1,45 +1,57 @@
-import React from 'react';
-import {Button, View, Text, StyleSheet, Image, Alert} from "react-native";
+import React, {useMemo} from 'react';
+import { View, Text, StyleSheet} from "react-native";
 import {colors} from "../../consts";
 import AppButton from "../atoms/button";
+import BookCover from "../molecules/book-cover";
+import {LinearGradient} from "expo-linear-gradient";
 
-interface IBookItemProps {
-    isRecentlyRead: boolean;
-    progress: number;
+
+export interface IBookDetail {
+    id: string;
+    title: string;
+    author: string;
+    cover: string;
+    left: number;
+    pageNumber: number;
+}
+export interface IBookItemProps extends IBookDetail{
+    onButtonPress: () => void;
+    isMostRecent?: boolean;
+    bookDetail: IBookDetail;
 }
 
-const BookItem: React.FC<IBookItemProps> = ({isRecentlyRead, progress = 10}) => {
 
-    const press = () => {
-        Alert.alert('You tapped the button!');
-    }
+const BookItem: React.FC<IBookItemProps> = ({onButtonPress, bookDetail, isMostRecent = false}) => {
+    const percentProgress = useMemo(() => {
+        return Math.round(bookDetail.pagePassCount / (bookDetail.pageCount / 100))
+    }, [bookDetail.pagePassCount, bookDetail.pageCount])
+
+
 
     return (
-        <View style={bookItem.bookItemBox}>
-            <View style={bookItem.bookItemImageBox}>
-                <Text>
-                    <Image source={{ uri: 'https://example.com/image.jpg' }} style={{ width: 200, height: 200 }} />
-                </Text>
+        <View style={styles.bookItemBox} onPress>
+            <View style={styles.bookItemImageBoxStyle}>
+                <BookCover uri={bookDetail.cover}/>
             </View>
-            <View style={bookItem.descriptionBox}>
+            <View style={styles.descriptionBox}>
                 <View>
-                    <Text style={bookItem.bookRecentlyReadText}>You recently read</Text>
-                    <Text style={bookItem.bookTitle}>Moby Dick</Text>
-                    <Text style={bookItem.bookAuthor}>Herman Melville</Text>
-                    <Text style={bookItem.bookReadLeftText}>13h has been reading</Text>
+                    <Text style={styles.bookRecentlyReadText}>You most recently read</Text>
+                    <Text style={styles.bookTitle}>{bookDetail.title}</Text>
+                    <Text style={styles.bookAuthor}>{bookDetail.author}</Text>
+                    <Text style={styles.bookReadLeftText}>{bookDetail.left}h has been reading</Text>
                 </View>
 
                 <View>
                     <View style={{marginBottom: 10}}>
-                        <Text style={bookItem.bookReadLeftText}> 17 / 532 ({progress}%)</Text>
-                        <View style={bookItem.progressBarBox}>
-                            <View style={[bookItem.progressBar, { height: isRecentlyRead ? 4 : 2 }]}>
-                                <View style={[bookItem.progressBar, { height: isRecentlyRead ? 4 : 2 , backgroundColor: colors.textPurpleBlue , width: `${progress}%`,}]} />
+                        <Text style={styles.bookReadLeftText}> {bookDetail.pagePassCount} / {bookDetail.pageCount} ({percentProgress}%)</Text>
+                        <View style={styles.progressBarBox}>
+                            <View style={[styles.progressBar, { height: isMostRecent ? 4 : 2 }]}>
+                                <View style={[styles.progressBar, { height: isMostRecent ? 4 : 2 , backgroundColor: colors.textPurpleBlue , width: `${percentProgress}%`,}]} />
                             </View>
                         </View>
                     </View>
                     <View>
-                        <AppButton onPress={press} title='Read'/>
+                        <AppButton onPress={onButtonPress} title='Read'/>
                     </View>
                 </View>
             </View>
@@ -47,33 +59,33 @@ const BookItem: React.FC<IBookItemProps> = ({isRecentlyRead, progress = 10}) => 
     );
 };
 
-const bookItem = StyleSheet.create({
+const styles = StyleSheet.create({
     bookItemBox: {
-        display: 'flex',
         flexDirection: 'row',
-        width: '100%'
+        width: '100%',
+        aspectRatio: 2,
     },
-
-    bookItemImageBox: {
+    bookItemImageBoxStyle:  {
         marginRight: 20,
-        width: 150,
-        height: 140 * 1.54,
-        backgroundColor: 'red'
+        width: '35%',
     },
 
     descriptionBox: {
-      display: 'flex',
-      flexDirection: 'column',
-        justifyContent: 'space-between'
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        flex: 1,
     },
+
     bookRecentlyReadText: {
-      color: colors.textGrey,
+        color: colors.textGrey,
         marginBottom: 5
     },
+
     bookTitle: {
         fontSize: 28,
         fontWeight: '700'
     },
+
     bookAuthor: {
         color: colors.textGrey,
         fontSize: 16,
@@ -85,15 +97,17 @@ const bookItem = StyleSheet.create({
     },
 
     progressBarBox: {
-      display: 'flex',
-      flexDirection: 'row',
+        display: 'flex',
+        flexDirection: 'row',
+
     },
 
     progressBar: {
         backgroundColor: colors.backgroundGrey,
-        width: 170,
+        width: '100%',
+
     },
 
 });
 
-export default BookItem;
+export default React.memo(BookItem);

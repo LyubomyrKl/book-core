@@ -1,6 +1,7 @@
-import React from 'react';
-import {TouchableOpacity, Text, StyleSheet, useColorScheme} from "react-native";
+import React, {useState} from 'react';
+import {TouchableOpacity, Text, StyleSheet, useColorScheme, Animated} from "react-native";
 import {colors} from "../../consts";
+import {TouchableRipple} from "react-native-paper";
 
 interface IAppButton {
     title: string;
@@ -8,15 +9,38 @@ interface IAppButton {
 }
 
 const AppButton: React.FC<IAppButton> = (props) => {
-
     const {title, onPress} = props;
+    const [animation] = useState(new Animated.Value(1));
     const theme = useColorScheme();
 
-    console.log(theme)
+    const handlePressIn = () => {
+        Animated.spring(animation, {
+            toValue: 0.8,
+            useNativeDriver: true,
+        }).start();
+    };
+
+    const handlePressOut = () => {
+        Animated.spring(animation, {
+            toValue: 1,
+            friction: 3,
+            tension: 40,
+            useNativeDriver: true,
+        }).start();
+    };
+
     return (
-        <TouchableOpacity style={[styles.button, {backgroundColor: theme === 'light' ? colors.black : colors.darkShade}]} onPress={onPress}>
-            <Text style={styles.buttonText}>{title}</Text>
-        </TouchableOpacity>
+            <TouchableOpacity
+                style={[styles.button, {backgroundColor: theme === 'light' ? colors.black : colors.darkShade}]}
+                onPress={onPress}
+                onPressIn={handlePressIn}
+                onPressOut={handlePressOut}
+                activeOpacity={1}
+            >
+                <Animated.View style={ {transform: [{ scale: animation }]}}>
+                    <Text style={styles.buttonText}>{title}</Text>
+                </Animated.View>
+            </TouchableOpacity>
     );
 };
 
@@ -34,4 +58,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default AppButton;
+export default React.memo(AppButton);

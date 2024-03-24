@@ -57,8 +57,9 @@ const quote = StyleSheet.create({
         paddingTop: 25,
         paddingBottom: 15,
         paddingHorizontal: 15,
-        backgroundColor: '#e5e5e5',
+        backgroundColor: 'rgba(229,229,229,0.5)',
         borderRadius:15,
+        opacity: 0.8,
     },
     quote: {
         fontWeight: 'semibold',

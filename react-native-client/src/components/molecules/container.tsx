@@ -13,6 +13,7 @@ const Container: React.FC = (props) => {
 
 const container = StyleSheet.create({
     container: {
+
         paddingVertical: 20,
         paddingHorizontal: 20,
     }
