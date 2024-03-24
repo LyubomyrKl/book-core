@@ -1,12 +1,17 @@
 import React, {useMemo} from 'react';
-import {View, StyleSheet, ImageBackground} from "react-native";
+import {View, StyleSheet, ImageBackground, Text} from "react-native";
 import {LinearGradient} from 'expo-linear-gradient';
 import Quote from "../organism/quote";
 import Container from "../molecules/container";
-import Tabs from "../organism/tabs";
 import MostRecentBookPresentation from "../templates/most_recent_book_presentation";
 import {IBookItemProps} from "../organism/book-item";
+import {colors} from "../../consts";
+import {Tab, TabView} from "@rneui/themed";
+import BookList from "../organism/book-list";
+import bookDetail from "./book-detail";
 const Library = ({navigation}: any) => {
+        const [index, setIndex] = React.useState(0);
+
         const moveToDetail = (id: string) => {
             navigation.navigate('BookDetail', {id});
         }
@@ -25,9 +30,15 @@ const Library = ({navigation}: any) => {
             }
         }, [])
 
+
+        const bookStub = [stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail ,stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail ,stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail,
+            stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail ,stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail ,stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail,
+            stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail ,stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail ,stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail,]
+
+    console.log(bookStub.length)
         return (
             <View style={styles.libraryContainer}>
-                <ImageBackground blurRadius={20} source={{uri: stubBookDetail.cover}} resizeMode="cover" style={styles.image}>
+                <ImageBackground blurRadius={20} source={{uri: stubBookDetail.cover}} resizeMode="cover" >
                     <LinearGradient
                         colors={['rgba(255,255,255,0)', 'rgba(255,255,255,0.85)']} // Adjust the alpha (opacity) values as needed
                         style={styles.gradient}
@@ -35,21 +46,64 @@ const Library = ({navigation}: any) => {
                         end={{ x: 0, y: 1 }}>
                     </LinearGradient>
                     <Container>
+                        {/*Todo: pass quotes from most recent book*/}
                             <Quote/>
                             {/*it's necessary to bookDetail to be memoized value*/}
-                            <MostRecentBookPresentation bookDetail={stubBookDetail} navigation={navigation} isMostRecent/>
+                            <MostRecentBookPresentation id={bookDetail.id} bookDetail={stubBookDetail} navigation={navigation} isMostRecent/>
                     </Container>
+
+                <Tab
+                    value={index}
+                    onChange={(e) => setIndex(e)}
+                    indicatorStyle={{
+                        backgroundColor: colors.textPurpleBlue,
+                        height: 3,
+                    }}
+                >
+                    <Tab.Item
+                        title="Recent"
+                        titleStyle={{ fontSize: 8, color: colors.textGrey }}
+                        icon={{ name: 'book', type: 'ionicon', color: colors.textPurpleBlue }}
+                    />
+                    <Tab.Item
+                        title="Favorite"
+                        titleStyle={{ fontSize: 8, color: colors.textGrey }}
+                        icon={{ name: 'heart', type: 'ionicon', color: colors.textPurpleBlue }}
+                    />
+                    <Tab.Item
+                        title="Finished"
+                        titleStyle={{ fontSize: 8, color: colors.textGrey }}
+                        icon={{ name: 'infinite', type: 'ionicon', color: colors.textPurpleBlue }}
+                    />
+                </Tab>
                 </ImageBackground>
-                <Tabs/>
+                <View style={{height: '100%'}}>
+                    <TabView
+                        value={index}
+                        onChange={setIndex}
+                        animationType="spring"
+                        tabItemContainerStyle={{
+                            borderRightWidth: 1,
+                            borderRightColor: colors.backgroundGrey,
+                        }}
+                    >
+                        <TabView.Item>
+                            <BookList books={bookStub} navigation={navigation} />
+                        </TabView.Item>
+                        <TabView.Item>
+                            <BookList books={bookStub} navigation={navigation} />
+                        </TabView.Item>
+                        <TabView.Item>
+                            <BookList books={bookStub} navigation={navigation} />
+                        </TabView.Item>
+                    </TabView>
+                </View>
+
             </View>
         );
 };
 
 const styles = StyleSheet.create({
-    image: {
-        paddingVertical: 20
-    },
-
     gradient: {
         position: 'absolute',
         left: 0,

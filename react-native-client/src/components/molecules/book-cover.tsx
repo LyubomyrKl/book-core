@@ -6,9 +6,10 @@ import { Shadow } from 'react-native-shadow-2';
 
 interface IBookCoverProps {
     uri: string;
+    enableShadow?: boolean
 }
 
-const BookCover: React.FC<IBookCoverProps> = ({uri}) => {
+const BookCover: React.FC<IBookCoverProps> = ({uri, enableShadow = false}) => {
     const [width, setWidth] = useState(0);
     const handleLayout = event => {
         event.persist();
@@ -20,7 +21,7 @@ const BookCover: React.FC<IBookCoverProps> = ({uri}) => {
 
     return (
 
-            <Shadow style={{width: '100%', height: '100%', borderRadius: 10}}
+            <Shadow disabled={enableShadow} style={{width: '100%', height: '100%', borderRadius: 10}}
                     distance={5}
                     startColor={'rgba(108,108,108,0.2)'}
                     endColor={'rgba(0,0,0,0)'}

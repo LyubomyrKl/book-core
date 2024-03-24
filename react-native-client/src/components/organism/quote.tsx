@@ -44,7 +44,7 @@ const Quote = () => {
                 </Svg>
             </View>
             <Text style={quote.quote}>Some stories have to be written because no one would believe the absurdity of it all</Text>
-            <Text style={quote.author}>    ---- Shannon L. Alder</Text>
+            <Text style={quote.author}>    ---- Herman Melville</Text>
         </View>
     );
 };

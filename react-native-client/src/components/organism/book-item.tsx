@@ -22,16 +22,15 @@ export interface IBookItemProps extends IBookDetail{
 
 
 const BookItem: React.FC<IBookItemProps> = ({onButtonPress, bookDetail, isMostRecent = false}) => {
+
     const percentProgress = useMemo(() => {
         return Math.round(bookDetail.pagePassCount / (bookDetail.pageCount / 100))
     }, [bookDetail.pagePassCount, bookDetail.pageCount])
 
-
-
     return (
         <View style={styles.bookItemBox} onPress>
             <View style={[styles.bookItemImageBoxStyle]}>
-                <BookCover uri={bookDetail.cover}/>
+                <BookCover uri={bookDetail.cover} enableShadow={!isMostRecent}/>
             </View>
             <View style={styles.descriptionBox}>
                 <View>
@@ -50,9 +49,9 @@ const BookItem: React.FC<IBookItemProps> = ({onButtonPress, bookDetail, isMostRe
                             </View>
                         </View>
                     </View>
-                    <View>
+                    {isMostRecent && <View>
                         <AppButton onPress={onButtonPress} title='Read'/>
-                    </View>
+                    </View>}
                 </View>
             </View>
         </View>
@@ -69,7 +68,6 @@ const styles = StyleSheet.create({
     bookItemImageBoxStyle:  {
         marginRight: 20,
         width: '35%',
-
     },
 
     descriptionBox: {

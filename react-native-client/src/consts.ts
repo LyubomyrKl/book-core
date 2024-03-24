@@ -1,5 +1,5 @@
 export const colors = Object.freeze({
-  textGrey: '#838383',
+  textGrey: '#5e5e5e',
   backgroundGrey: '#e5e5e5',
   textPurpleBlue: '#8f9fd5',
   black: '#101010',
