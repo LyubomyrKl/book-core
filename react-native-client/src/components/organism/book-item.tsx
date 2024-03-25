@@ -34,10 +34,10 @@ const BookItem: React.FC<IBookItemProps> = ({onButtonPress, bookDetail, isMostRe
             </View>
             <View style={styles.descriptionBox}>
                 <View>
-                    <Text style={styles.bookRecentlyReadText}>You most recently read</Text>
-                    <Text style={styles.bookTitle}>{bookDetail.title}</Text>
-                    <Text style={styles.bookAuthor}>{bookDetail.author}</Text>
-                    <Text style={styles.bookReadLeftText}>{bookDetail.left}h has been reading</Text>
+                    {isMostRecent && <Text style={styles.bookRecentlyReadText}>You most recently read</Text>}
+                    <Text style={[styles.bookTitle, {fontSize: !isMostRecent ? 20 : bookDetail.title.length > 20 ? 24 : 28}]}>{bookDetail.title}</Text>
+                    <Text style={[styles.bookAuthor, {fontSize: isMostRecent ? 16 : 14}]}>{bookDetail.author}</Text>
+                    <Text style={[styles.bookReadLeftText, {fontSize: isMostRecent ? 14 : 12}]}>{bookDetail.left}h has been reading</Text>
                 </View>
 
                 <View>
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     },
 
     bookTitle: {
-        fontSize: 28,
+
         fontWeight: '700'
     },
 

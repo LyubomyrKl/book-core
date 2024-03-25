@@ -1,44 +1,32 @@
-import React, {useMemo} from 'react';
+import React, {useMemo, useState} from 'react';
 import {View, StyleSheet, ImageBackground, Text} from "react-native";
 import {LinearGradient} from 'expo-linear-gradient';
 import Quote from "../organism/quote";
 import Container from "../molecules/container";
-import MostRecentBookPresentation from "../templates/most_recent_book_presentation";
-import {IBookItemProps} from "../organism/book-item";
+import MemoMostRecentBookPresentation from "../templates/most_recent_book_presentation";
+import {IBookDetail} from "../organism/book-item";
 import {colors} from "../../consts";
 import {Tab, TabView} from "@rneui/themed";
-import BookList from "../organism/book-list";
+import MemoBookList from "../organism/book-list";
 import bookDetail from "./book-detail";
+import stubBooks from "../../stub";
 const Library = ({navigation}: any) => {
-        const [index, setIndex] = React.useState(0);
+        const [index, setIndex] = useState(0);
+        const stub = useMemo(() => stubBooks, [])
+        const [mostRecent, setMostRecent] = useState<IBookDetail>(stub[0]);
 
         const moveToDetail = (id: string) => {
             navigation.navigate('BookDetail', {id});
         }
 
+        const onBookPress = (book: IBookDetail) => {
+            setMostRecent(book)
+            navigation.navigate('BookDetails', {id: book.id})
+        }
 
-        {/*it's necessary to bookDetail to be memoized value*/}
-        const stubBookDetail: IBookItemProps.bookDetail = useMemo(() => {
-            return {
-                id: '1',
-                title: 'Moby Dick',
-                author: 'Herman Melville',
-                cover: 'https://m.media-amazon.com/images/I/616R20nvohL._AC_UF1000,1000_QL80_.jpg',
-                left: 13,
-                pageCount: 532,
-                pagePassCount: 134,
-            }
-        }, [])
-
-
-        const bookStub = [stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail ,stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail ,stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail,
-            stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail ,stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail ,stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail,
-            stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail ,stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail ,stubBookDetail, stubBookDetail, stubBookDetail, stubBookDetail,]
-
-    console.log(bookStub.length)
         return (
             <View style={styles.libraryContainer}>
-                <ImageBackground blurRadius={20} source={{uri: stubBookDetail.cover}} resizeMode="cover" >
+                <ImageBackground blurRadius={20} source={{uri: mostRecent.cover}} resizeMode="cover" >
                     <LinearGradient
                         colors={['rgba(255,255,255,0)', 'rgba(255,255,255,0.85)']} // Adjust the alpha (opacity) values as needed
                         style={styles.gradient}
@@ -46,10 +34,10 @@ const Library = ({navigation}: any) => {
                         end={{ x: 0, y: 1 }}>
                     </LinearGradient>
                     <Container>
-                        {/*Todo: pass quotes from most recent book*/}
-                            <Quote/>
+                        {/*Todo: select short quotes for mobile and long for tablets */}
+                            <Quote quote='It is better to fail in originality, than to succeed in imitation. Failure is the true test of greatness' title={mostRecent.title} author={mostRecent.author}/>
                             {/*it's necessary to bookDetail to be memoized value*/}
-                            <MostRecentBookPresentation id={bookDetail.id} bookDetail={stubBookDetail} navigation={navigation} isMostRecent/>
+                            <MemoMostRecentBookPresentation id={bookDetail.id} bookDetail={mostRecent} navigation={navigation} isMostRecent/>
                     </Container>
 
                 <Tab
@@ -77,7 +65,7 @@ const Library = ({navigation}: any) => {
                     />
                 </Tab>
                 </ImageBackground>
-                <View style={{height: '100%'}}>
+                <View style={{flex: 1}}>
                     <TabView
                         value={index}
                         onChange={setIndex}
@@ -88,22 +76,24 @@ const Library = ({navigation}: any) => {
                         }}
                     >
                         <TabView.Item>
-                            <BookList books={bookStub} navigation={navigation} />
+                            <MemoBookList onBookPress={setMostRecent} books={stub}/>
                         </TabView.Item>
                         <TabView.Item>
-                            <BookList books={bookStub} navigation={navigation} />
+                            <MemoBookList onBookPress={setMostRecent} books={stub}/>
                         </TabView.Item>
                         <TabView.Item>
-                            <BookList books={bookStub} navigation={navigation} />
+                            <MemoBookList onBookPress={setMostRecent} books={stub}/>
                         </TabView.Item>
                     </TabView>
                 </View>
-
             </View>
         );
 };
 
 const styles = StyleSheet.create({
+    libraryContainer: {
+      flex: 1,
+    },
     gradient: {
         position: 'absolute',
         left: 0,

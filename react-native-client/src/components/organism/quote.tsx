@@ -4,10 +4,16 @@ import Svg, { Path, Circle, Rect, G} from 'react-native-svg';
 import {Text, StyleSheet, View} from "react-native";
 import {colors} from "../../consts";
 
-const Quote = () => {
+interface IQuote {
+    quote: string;
+    author: string;
+    title: string;
+}
+
+const Quote = ({quote, author, title}:IQuote) => {
     return (
-        <View style={quote.quoteBox}>
-            <View style={quote.svg}>
+        <View style={styles.quoteBox}>
+            <View style={styles.svg}>
                 <Svg
                     width="80"
                     height="80"
@@ -43,13 +49,13 @@ const Quote = () => {
                     />
                 </Svg>
             </View>
-            <Text style={quote.quote}>Some stories have to be written because no one would believe the absurdity of it all</Text>
-            <Text style={quote.author}>    ---- Herman Melville</Text>
+            <Text style={styles.quote}>{quote}</Text>
+            <Text style={styles.author}>    ---- {author} from {title}</Text>
         </View>
     );
 };
 
-const quote = StyleSheet.create({
+const styles = StyleSheet.create({
     quoteBox: {
         marginTop: 20,
         marginBottom: 40,

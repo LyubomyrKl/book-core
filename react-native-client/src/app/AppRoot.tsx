@@ -1,12 +1,12 @@
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
-import Profile from "../components/pages/profile";
-import Library from "../components/pages/library";
-import BookDetail from "../components/pages/book-detail";
+import Profile from "../components/screens/profile";
+import Library from "../components/screens/library";
+import BookDetail from "../components/screens/book-detail";
 import {createStackNavigator} from "@react-navigation/stack";
 import Octicons from 'react-native-vector-icons/Octicons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { View, TouchableOpacity, Animated } from 'react-native';
 import {colors} from "../consts";
+import Quotes from "../components/screens/quotes";
 const AppStack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -15,6 +15,7 @@ function AppRoot() {
         <AppStack.Navigator>
             <AppStack.Screen name={'Tabs'} options={{headerShown: false}}  component={Tabs}/>
             <AppStack.Screen name={'BookDetail'} component={BookDetail} />
+            <AppStack.Screen name={'Quotes'} component={Quotes} />
         </AppStack.Navigator>
     );
 }

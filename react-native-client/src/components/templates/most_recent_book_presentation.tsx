@@ -1,6 +1,6 @@
 import React, {useCallback, useContext, useEffect, useState} from 'react';
-import {View, StyleSheet, Dimensions, TouchableWithoutFeedback} from "react-native";
-import BookItem, {IBookDetail} from "../organism/book-item";
+import {View, StyleSheet, Dimensions, TouchableWithoutFeedback, Alert} from "react-native";
+import MemoBookItem, {IBookDetail} from "../organism/book-item";
 import {AppContext} from "../../app/app-context";
 
 
@@ -17,7 +17,7 @@ const MostRecentBookPresentation: React.FC<IMostRecentBookPresentationProps> = (
     const {windowSize} = useContext(AppContext)
 
     const readBook = useCallback((id: string) => {
-        navigation.navigate('BookDetail', {id});
+        Alert.alert('Read book', `Read book with id: ${id}`)
     }, [navigation, id]);
 
 
@@ -25,7 +25,7 @@ const MostRecentBookPresentation: React.FC<IMostRecentBookPresentationProps> = (
         <TouchableWithoutFeedback onPress={() => navigation.navigate('BookDetail', {id})}>
             <View style={mostRecentBookStyle.mostRecentBookPresentationWrapper}>
                 <View style={[mostRecentBookStyle.bookItemBox, { maxWidth: windowSize.width > 400 ? 400 : '100%'}]}>
-                    <BookItem onButtonPress={readBook} bookDetail={bookDetail} isMostRecent/>
+                    <MemoBookItem onButtonPress={readBook} bookDetail={bookDetail} isMostRecent/>
                 </View>
             </View>
         </TouchableWithoutFeedback>
@@ -46,4 +46,4 @@ const mostRecentBookStyle = StyleSheet.create({
     }
 });
 
-export default MostRecentBookPresentation;
+export default React.memo(MostRecentBookPresentation);
