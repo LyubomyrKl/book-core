@@ -1,8 +1,9 @@
-import React, {useMemo} from 'react';
+import React, {useContext, useMemo} from 'react';
 import { View, Text, StyleSheet} from "react-native";
-import {colors} from "../../consts";
+import {getColors} from "../../consts";
 import AppButton from "../atoms/button";
 import BookCover from "../molecules/book-cover";
+import {AppContext} from "../../app/app-context";
 
 
 
@@ -22,7 +23,8 @@ export interface IBookItemProps extends IBookDetail{
 
 
 const BookItem: React.FC<IBookItemProps> = ({onButtonPress, bookDetail, isMostRecent = false}) => {
-
+    const {theme} = useContext(AppContext)
+    const colors = useMemo(() => getColors(theme), [theme])
     const percentProgress = useMemo(() => {
         return Math.round(bookDetail.pagePassCount / (bookDetail.pageCount / 100))
     }, [bookDetail.pagePassCount, bookDetail.pageCount])
@@ -34,17 +36,17 @@ const BookItem: React.FC<IBookItemProps> = ({onButtonPress, bookDetail, isMostRe
             </View>
             <View style={styles.descriptionBox}>
                 <View>
-                    {isMostRecent && <Text style={styles.bookRecentlyReadText}>You most recently read</Text>}
-                    <Text style={[styles.bookTitle, {fontSize: !isMostRecent ? 20 : bookDetail.title.length > 20 ? 24 : 28}]}>{bookDetail.title}</Text>
-                    <Text style={[styles.bookAuthor, {fontSize: isMostRecent ? 16 : 14}]}>{bookDetail.author}</Text>
-                    <Text style={[styles.bookReadLeftText, {fontSize: isMostRecent ? 14 : 12}]}>{bookDetail.left}h has been reading</Text>
+                    {isMostRecent && <Text style={{color: colors.textGrey}}>You most recently read</Text>}
+                    <Text style={[styles.bookTitle, {color: colors.textBlack, fontSize: !isMostRecent ? 20 : bookDetail.title.length > 20 ? 20 : 28}]}>{bookDetail.title}</Text>
+                    <Text style={[styles.bookAuthor, {color: colors.textGrey,fontSize: isMostRecent ? 16 : 14}]}>{bookDetail.author}</Text>
+                    <Text style={[styles.bookReadLeftText, {color: colors.textGrey, fontSize: isMostRecent ? 14 : 12}]}>{bookDetail.left}h has been reading</Text>
                 </View>
 
                 <View>
                     <View style={{marginBottom: 10}}>
-                        <Text style={styles.bookReadLeftText}> {bookDetail.pagePassCount} / {bookDetail.pageCount} ({percentProgress}%)</Text>
+                        <Text style={[styles.bookReadLeftText, {color: colors.textBlack,}]}> {bookDetail.pagePassCount} / {bookDetail.pageCount} ({percentProgress}%)</Text>
                         <View style={styles.progressBarBox}>
-                            <View style={[styles.progressBar, { height: isMostRecent ? 4 : 2 }]}>
+                            <View style={[styles.progressBar, { height: isMostRecent ? 4 : 2, backgroundColor: colors.backgroundGrey,}]}>
                                 <View style={[styles.progressBar, { height: isMostRecent ? 4 : 2 , backgroundColor: colors.textPurpleBlue , width: `${percentProgress}%`,}]} />
                             </View>
                         </View>
@@ -76,23 +78,16 @@ const styles = StyleSheet.create({
         flex: 1,
     },
 
-    bookRecentlyReadText: {
-        color: colors.textGrey,
-        marginBottom: 5
-    },
 
     bookTitle: {
-
         fontWeight: '700'
     },
 
     bookAuthor: {
-        color: colors.textGrey,
         fontSize: 16,
     },
 
     bookReadLeftText:{
-        color: colors.textGrey,
         marginBottom: 10
     },
 
@@ -102,7 +97,7 @@ const styles = StyleSheet.create({
     },
 
     progressBar: {
-        backgroundColor: colors.backgroundGrey,
+
         width: '100%',
 
     },

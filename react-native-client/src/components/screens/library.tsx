@@ -1,19 +1,22 @@
-import React, {useMemo, useState} from 'react';
-import {View, StyleSheet, ImageBackground, Text} from "react-native";
+import React, {useContext, useMemo, useState} from 'react';
+import {View, StyleSheet, ImageBackground} from "react-native";
 import {LinearGradient} from 'expo-linear-gradient';
 import Quote from "../organism/quote";
 import Container from "../molecules/container";
 import MemoMostRecentBookPresentation from "../templates/most_recent_book_presentation";
 import {IBookDetail} from "../organism/book-item";
-import {colors} from "../../consts";
+import {getColors} from "../../consts";
 import {Tab, TabView} from "@rneui/themed";
 import MemoBookList from "../organism/book-list";
 import bookDetail from "./book-detail";
 import stubBooks from "../../stub";
+import {AppContext} from "../../app/app-context";
 const Library = ({navigation}: any) => {
         const [index, setIndex] = useState(0);
         const stub = useMemo(() => stubBooks, [])
         const [mostRecent, setMostRecent] = useState<IBookDetail>(stub[0]);
+        const {windowSize, theme} = useContext(AppContext)
+        const colors = useMemo(() => getColors(theme), [theme])
 
         const moveToDetail = (id: string) => {
             navigation.navigate('BookDetail', {id});
@@ -28,15 +31,17 @@ const Library = ({navigation}: any) => {
             <View style={styles.libraryContainer}>
                 <ImageBackground blurRadius={20} source={{uri: mostRecent.cover}} resizeMode="cover" >
                     <LinearGradient
-                        colors={['rgba(255,255,255,0)', 'rgba(255,255,255,0.85)']} // Adjust the alpha (opacity) values as needed
+                        colors={['rgba(0,0,0,0)', colors.backgroundWhite]} // Adjust the alpha (opacity) values as needed
                         style={styles.gradient}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 0, y: 1 }}>
                     </LinearGradient>
                     <Container>
                         {/*Todo: select short quotes for mobile and long for tablets */}
+                        <View style={{marginTop: 20, marginBottom: windowSize > 400 ? 40 : 20 }}>
                             <Quote quote='It is better to fail in originality, than to succeed in imitation. Failure is the true test of greatness' title={mostRecent.title} author={mostRecent.author}/>
-                            {/*it's necessary to bookDetail to be memoized value*/}
+                        </View>
+                            {/*it's necessary to bookDetail to be memoized object that does not change the link*/}
                             <MemoMostRecentBookPresentation id={bookDetail.id} bookDetail={mostRecent} navigation={navigation} isMostRecent/>
                     </Container>
 
@@ -65,7 +70,7 @@ const Library = ({navigation}: any) => {
                     />
                 </Tab>
                 </ImageBackground>
-                <View style={{flex: 1}}>
+                <View style={{flex: 1, backgroundColor: colors.backgroundWhite}}>
                     <TabView
                         value={index}
                         onChange={setIndex}

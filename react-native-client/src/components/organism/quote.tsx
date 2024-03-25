@@ -1,8 +1,9 @@
-import React from 'react';
+import React, {useContext, useMemo} from 'react';
 import Svg, { Path, Circle, Rect, G} from 'react-native-svg';
 
 import {Text, StyleSheet, View} from "react-native";
-import {colors} from "../../consts";
+import {getColors} from "../../consts";
+import {AppContext} from "../../app/app-context";
 
 interface IQuote {
     quote: string;
@@ -11,8 +12,11 @@ interface IQuote {
 }
 
 const Quote = ({quote, author, title}:IQuote) => {
+    const {theme} = useContext(AppContext)
+    const colors = useMemo(() => getColors(theme), [theme]);
+
     return (
-        <View style={styles.quoteBox}>
+        <View style={[styles.quoteBox, {backgroundColor: colors.backgroundWhite}]}>
             <View style={styles.svg}>
                 <Svg
                     width="80"
@@ -49,23 +53,20 @@ const Quote = ({quote, author, title}:IQuote) => {
                     />
                 </Svg>
             </View>
-            <Text style={styles.quote}>{quote}</Text>
-            <Text style={styles.author}>    ---- {author} from {title}</Text>
+            <Text style={[styles.quote, {color: colors.textBlack}]}>{quote}</Text>
+            <Text style={[styles.author, {color: colors.textGrey}]}>    ---- {author} from {title}</Text>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     quoteBox: {
-        marginTop: 20,
-        marginBottom: 40,
         position: 'relative',
         paddingTop: 25,
-        paddingBottom: 15,
         paddingHorizontal: 15,
-        backgroundColor: 'rgba(229,229,229,0.5)',
         borderRadius:15,
         opacity: 0.8,
+
     },
     quote: {
         fontWeight: 'semibold',
@@ -75,7 +76,6 @@ const styles = StyleSheet.create({
         fontWeight: 'semibold',
         paddingVertical: 8,
         textAlign: 'right',
-        color: colors.textGrey,
     },
     svg: {
         position: 'absolute',

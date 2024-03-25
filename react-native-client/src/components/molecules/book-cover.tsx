@@ -1,7 +1,8 @@
-import React, { useState} from 'react';
+import React, {useContext, useMemo, useState} from 'react';
 import { View, StyleSheet, Image} from "react-native";
-import {colors} from "../../consts";
-import { Shadow } from 'react-native-shadow-2';
+import {getColors} from "../../consts";
+import {Shadow} from 'react-native-shadow-2';
+import {AppContext} from "../../app/app-context";
 
 
 interface IBookCoverProps {
@@ -11,12 +12,14 @@ interface IBookCoverProps {
 
 const BookCover: React.FC<IBookCoverProps> = ({uri, enableShadow = false}) => {
     const [width, setWidth] = useState(0);
+    const {theme} = useContext(AppContext)
+
+    const colors = useMemo(() => getColors(theme), [theme]);
     const handleLayout = event => {
         event.persist();
         const { width } = event.nativeEvent.layout;
         setWidth(() => width);
     };
-
 
 
     return (
@@ -30,7 +33,7 @@ const BookCover: React.FC<IBookCoverProps> = ({uri, enableShadow = false}) => {
                     sides={{ start: true, end: true, top: true, bottom: true }}
             >
                 <View style={[styles.bookContainer]} onLayout={handleLayout}>
-                    <View style={[styles.bookCoverItem, styles.bookBackCover]}>
+                    <View style={[styles.bookCoverItem, styles.bookBackCover, {backgroundColor: colors.textGrey}]}>
                         <Image
                             source={{uri}}
                             style={[styles.image]}
@@ -39,19 +42,23 @@ const BookCover: React.FC<IBookCoverProps> = ({uri, enableShadow = false}) => {
                         />
                     </View>
                     <View style={[styles.bookCoverItem, styles.list, {
+                        borderColor: colors.backgroundGrey,
                         right: width * .1 / 5
                     }]}></View>
                     <View style={[styles.bookCoverItem, styles.list, {
+                        borderColor: colors.backgroundGrey,
                         right: width * .1 / 5 * 2
                     }]}></View>
                     <View style={[styles.bookCoverItem, styles.list, {
+                        borderColor: colors.backgroundGrey,
                         right: width * .1 / 5 * 2.8
                     }]}></View>
                     <View style={[styles.bookCoverItem, styles.list, {
+                        borderColor: colors.backgroundGrey,
                         right: width * .1 / 5 * 3.8
                     }]}></View>
 
-                    <View style={[styles.bookCoverItem, styles.bookFrontCover]}>
+                    <View style={[styles.bookCoverItem, {backgroundColor: colors.textGrey}]}>
                         <Image
                             source={{uri}}
                             style={styles.image}
@@ -69,7 +76,6 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         backgroundColor: 'transparent', // Set a background color
-        // overflow: 'hidden', // Add overflow: hidden
     },
 
     bookCoverItem: {
@@ -82,18 +88,13 @@ const styles = StyleSheet.create({
     list: {
         backgroundColor: '#ffffff',
         borderWidth: 1,
-        borderColor: colors.backgroundGrey,
         height: '98%',
     },
 
     bookBackCover:{
         right: 0,
-        backgroundColor: colors.textGrey,
     },
 
-    bookFrontCover:{
-        backgroundColor: colors.textGrey,
-    },
     image: {
         flex: 1,
         borderRadius: 10,

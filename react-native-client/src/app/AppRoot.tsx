@@ -5,8 +5,10 @@ import BookDetail from "../components/screens/book-detail";
 import {createStackNavigator} from "@react-navigation/stack";
 import Octicons from 'react-native-vector-icons/Octicons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {colors} from "../consts";
+import {getColors} from "../consts";
 import Quotes from "../components/screens/quotes";
+import {useContext, useMemo} from "react";
+import {AppContext} from "./app-context";
 const AppStack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -22,9 +24,14 @@ function AppRoot() {
 export default AppRoot;
 
 const Tabs = () => {
+    const {theme} = useContext(AppContext)
+    const colors = useMemo(() => getColors(theme), [theme]);
+
     return (
         <Tab.Navigator
+            initialRouteName={'Library'}
             screenOptions={({ route }) => ({
+                tabBarStyle: { backgroundColor: colors.backgroundWhite },
                 tabBarIcon: ({ focused, color, size }) => {
                     let iconName = '';
 
@@ -38,6 +45,7 @@ const Tabs = () => {
                 },
                 tabBarActiveTintColor: colors.textPurpleBlue,
                 tabBarInactiveTintColor: colors.textGrey,
+
             })}
         >
             <Tab.Screen name="Library" options={{headerShown: false}} component={Library} />

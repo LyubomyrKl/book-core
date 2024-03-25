@@ -1,5 +1,5 @@
-import React, {useCallback, useContext, useEffect, useState} from 'react';
-import {View, StyleSheet, Dimensions, TouchableWithoutFeedback, Alert} from "react-native";
+import React, {useCallback, useContext} from 'react';
+import {View, StyleSheet, TouchableWithoutFeedback, Alert} from "react-native";
 import MemoBookItem, {IBookDetail} from "../organism/book-item";
 import {AppContext} from "../../app/app-context";
 
@@ -9,8 +9,6 @@ interface IMostRecentBookPresentationProps{
     bookDetail: IBookDetail;
     id: string
 }
-
-
 
 
 const MostRecentBookPresentation: React.FC<IMostRecentBookPresentationProps> = ({id, bookDetail, navigation}) => {
@@ -23,8 +21,8 @@ const MostRecentBookPresentation: React.FC<IMostRecentBookPresentationProps> = (
 
     return (
         <TouchableWithoutFeedback onPress={() => navigation.navigate('BookDetail', {id})}>
-            <View style={mostRecentBookStyle.mostRecentBookPresentationWrapper}>
-                <View style={[mostRecentBookStyle.bookItemBox, { maxWidth: windowSize.width > 400 ? 400 : '100%'}]}>
+            <View style={[mostRecentBookStyle.mostRecentBookPresentationWrapper, {marginBottom: windowSize.width > 400 ? 20 : 0}]}>
+                <View style={{ maxWidth: windowSize.width > 400 ? 500 : '100%'}}>
                     <MemoBookItem onButtonPress={readBook} bookDetail={bookDetail} isMostRecent/>
                 </View>
             </View>
@@ -37,13 +35,7 @@ const mostRecentBookStyle = StyleSheet.create({
         width: '100%',
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: 20
-
     },
-    bookItemBox: {
-        marginVertical: 0,
-        marginHorizontal: 'auto',
-    }
 });
 
 export default React.memo(MostRecentBookPresentation);
