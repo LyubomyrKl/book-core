@@ -23,11 +23,14 @@ export interface IBookItemProps extends IBookDetail{
 
 
 const BookItem: React.FC<IBookItemProps> = ({onButtonPress, bookDetail, isMostRecent = false}) => {
-    const {theme} = useContext(AppContext)
+    const {theme, windowSize} = useContext(AppContext)
     const colors = useMemo(() => getColors(theme), [theme])
     const percentProgress = useMemo(() => {
         return Math.round(bookDetail.pagePassCount / (bookDetail.pageCount / 100))
     }, [bookDetail.pagePassCount, bookDetail.pageCount])
+
+    const titleFontSize  = !isMostRecent ? 20 : isMostRecent &&  windowSize.width  > 400 ? 28 : bookDetail.title.length > 20 ? 20 : 24
+
 
     return (
         <View style={styles.bookItemBox} onPress>
@@ -37,7 +40,7 @@ const BookItem: React.FC<IBookItemProps> = ({onButtonPress, bookDetail, isMostRe
             <View style={styles.descriptionBox}>
                 <View>
                     {isMostRecent && <Text style={{color: colors.textGrey}}>You most recently read</Text>}
-                    <Text style={[styles.bookTitle, {color: colors.textBlack, fontSize: !isMostRecent ? 20 : bookDetail.title.length > 20 ? 20 : 28}]}>{bookDetail.title}</Text>
+                    <Text style={[styles.bookTitle, {color: colors.textBlack, fontSize: titleFontSize }]}>{bookDetail.title}</Text>
                     <Text style={[styles.bookAuthor, {color: colors.textGrey,fontSize: isMostRecent ? 16 : 14}]}>{bookDetail.author}</Text>
                     <Text style={[styles.bookReadLeftText, {color: colors.textGrey, fontSize: isMostRecent ? 14 : 12}]}>{bookDetail.left}h has been reading</Text>
                 </View>
