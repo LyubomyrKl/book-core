@@ -6,25 +6,27 @@ import {AppContext} from "../../app/app-context";
 import { customAlphabet } from 'nanoid/non-secure';
 import {TouchableRipple} from "react-native-paper";
 import {getColors} from "../../consts";
+import {useAppSelector} from "../../hooks";
+import {selectTheme} from "../../redux/slices/settingSlice";
 
 const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789', 10);
 
 interface IBookListProps {
-    onBookPress: (id: IBookDetail) => void,
+    onBookPress: (book: IBookDetail) => void,
     books: IBookDetail[],
 }
 
 const BookList: React.FC<IBookListProps> = ({books, onBookPress}) => {
-    const {windowSize, theme} = useContext(AppContext);
+    const {windowSize} = useContext(AppContext);
+    const theme = useAppSelector(selectTheme)
     const colors = useMemo(() => getColors(theme), [theme]);
     const renderBookItem = ({item}) => (
         // Todo: Add key to BookItem
-
-            <View style={[styles.listItem, {  width: windowSize.width > 400 ? '50%' : '100%',}]}>
-                <TouchableRipple rippleColor={colors.touchAnimation} style={{paddingRight: 30,}} onPress={() => onBookPress(item)} >
-                    <MemoBookItem bookDetail={item}/>
-                </TouchableRipple>
-            </View>
+        <View style={[styles.listItem, {  width: windowSize.width > 400 ? '50%' : '100%',}]}>
+            <TouchableRipple rippleColor={colors.touchAnimation} style={{paddingRight: 30,}} onPress={() => onBookPress(item)} >
+                <MemoBookItem bookDetail={item}/>
+            </TouchableRipple>
+        </View>
 
     );
 

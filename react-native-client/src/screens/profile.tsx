@@ -1,20 +1,32 @@
-import React, {useCallback, useContext, useMemo, useState} from 'react';
-import {View, Text, FlatList, TouchableNativeFeedback} from "react-native";
-import {AppContext} from "../../app/app-context";
+// Imports organized alphabetically and grouped by type
+import React, { useCallback, useContext, useMemo, useState } from 'react';
+import { View, Text, FlatList } from 'react-native';
+import Svg, { Circle, ClipPath, Defs, G, Path } from 'react-native-svg';
+import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {getColors} from "../../consts";
-import Container from "../molecules/container";
-import AppButton from "../atoms/button";
-import Svg, {Circle, ClipPath, Defs, G, Path} from "react-native-svg";
-import SelectItem from "../atoms/select-item";
 
+// Custom imports
+import { AppContext } from '../app/app-context';
+import Container from '../components/molecules/container';
+import AppButton from '../components/atoms/button';
+import SelectItem from '../components/atoms/select-item';
 
+// Constants and utilities
+import { IColors, getColors } from '../consts';
+import {useAppDispatch, useAppSelector} from "../hooks";
+import {selectTheme, setTheme} from "../redux/slices/settingSlice";
 
-const Profile = ({}) => {
-    const {theme, setTheme} = useContext(AppContext);
-    const [language, setLanguage] = useState('EN');
-    const colors = useMemo(() => getColors(theme), [theme]);
+interface IProfileProps extends BottomTabScreenProps<{}, "Profile">{
 
+}
+
+type TLanguage = 'UA' | 'EN' | 'GE' | 'JP';
+
+const Profile: React.FC<IProfileProps>= () => {
+    const dispatch = useAppDispatch();
+    const theme = useAppSelector(selectTheme)
+    const [language, setLanguage] = useState<TLanguage>('EN');
+    const colors = useMemo<IColors>(() => getColors(theme), [theme]);
 
     const RequirementsItem = useCallback(({title, description}: ItemProps) => {
         return (
@@ -24,7 +36,6 @@ const Profile = ({}) => {
             </View>
         )
     }, [])
-
 
 
     return (
@@ -42,11 +53,11 @@ const Profile = ({}) => {
                     Theme
                 </Text>
                 <View style={styles.selectBox}>
-                    <SelectItem styles={{width: '49%'}} onPress={() => setTheme('light')} isActive={theme === 'light'}>
+                    <SelectItem styles={{width: '49%'}} onPress={() => dispatch(setTheme('light'))} isActive={theme === 'light'}>
                         <Ionicons name={theme === 'light' ?  'sunny-outline' : 'sunny-sharp'} size={20} color={colors.textGrey}/>
                     </SelectItem>
 
-                    <SelectItem styles={{width: '49%'}} onPress={() => setTheme('dark')} isActive={theme !== 'light'}>
+                    <SelectItem styles={{width: '49%'}} onPress={() => dispatch(setTheme('dark'))} isActive={theme !== 'light'}>
                         <Ionicons name={theme !== 'light' ? 'moon-sharp' : 'moon-outline'} size={20} color={theme !== 'light' ? colors.darkShade : colors.textGrey}/>
                     </SelectItem>
                 </View>

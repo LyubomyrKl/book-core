@@ -1,35 +1,54 @@
-import React, {useContext, useMemo, useState} from 'react';
-import {View, StyleSheet, ImageBackground} from "react-native";
-import {LinearGradient} from 'expo-linear-gradient';
-import Quote from "../organism/quote";
-import Container from "../molecules/container";
-import MemoMostRecentBookPresentation from "../templates/most_recent_book_presentation";
-import {IBookDetail} from "../organism/book-item";
-import {getColors} from "../../consts";
-import {Tab, TabView} from "@rneui/themed";
-import MemoBookList from "../organism/book-list";
-import bookDetail from "./book-detail";
-import stubBooks from "../../stub";
-import {AppContext} from "../../app/app-context";
-const Library = ({navigation}: any) => {
-        const [index, setIndex] = useState(0);
-        const stub = useMemo(() => stubBooks, [])
-        const [mostRecent, setMostRecent] = useState<IBookDetail>(stub[0]);
-        const {windowSize, theme} = useContext(AppContext)
-        const colors = useMemo(() => getColors(theme), [theme])
+// Imports organized alphabetically and grouped by type
+import React, { useCallback, useContext, useMemo, useState } from 'react';
+import { View, StyleSheet, ImageBackground } from 'react-native';
+import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Tab, TabView } from '@rneui/themed';
 
-        const moveToDetail = (id: string) => {
-            navigation.navigate('BookDetail', {id});
-        }
+// Custom imports
+import MemoMostRecentBookPresentation from '../components/templates/most_recent_book_presentation';
+import MemoBookList from '../components/organism/book-list';
+import {IBookDetail} from "../components/organism/book-item";
+import { AppContext } from '../app/app-context';
+import Container from '../components/molecules/container';
+import Quote from '../components/organism/quote';
 
-        const onBookPress = (book: IBookDetail) => {
-            setMostRecent(book)
-            navigation.navigate('BookDetails', {id: book.id})
-        }
+// Selectors
+import {selectBooks, selectMostRecentReadBook} from "../redux/slices/booksSlice";
+
+// Custom hooks
+import {useAppSelector} from "../hooks";
+
+// Constants and utilities
+import { IColors, getColors } from '../consts';
+import {selectTheme} from "../redux/slices/settingSlice";
+
+
+
+
+interface ILibraryProps extends BottomTabScreenProps<{}, "Library">{
+
+}
+
+const Library: React.FC<ILibraryProps>= ({navigation}) => {
+        const [index, setIndex] = useState<number>(0);
+        const books: IBookDetail[] = useAppSelector(selectBooks);
+        const mostRecentReadBook: IBookDetail = useAppSelector(selectMostRecentReadBook);
+        const theme = useAppSelector(selectTheme);
+
+        const {windowSize} = useContext(AppContext);
+        const colors = useMemo<IColors>(() => getColors(theme), [theme]);
+
+        const favoriteBooks = useMemo(() => books.filter(book => book.isFavorite), [books]);
+        const finishedBooks = useMemo(() => books.filter(book => book.isFinished), [books]);
+
+        const onBookPress = useCallback((book: IBookDetail) => {
+            navigation.navigate('BookDetails', {book})
+        }, [])
 
         return (
             <View style={styles.libraryContainer}>
-                <ImageBackground blurRadius={20} source={{uri: mostRecent.cover}} resizeMode="cover" >
+                <ImageBackground blurRadius={20} source={{uri: mostRecentReadBook.cover}} resizeMode="cover" >
                     <LinearGradient
                         colors={['rgba(0,0,0,0)', colors.backgroundWhite]} // Adjust the alpha (opacity) values as needed
                         style={styles.gradient}
@@ -39,10 +58,10 @@ const Library = ({navigation}: any) => {
                     <Container>
                         {/*Todo: select short quotes for mobile and long for tablets */}
                         <View style={{marginTop: 20, marginBottom: windowSize > 400 ? 40 : 20 }}>
-                            <Quote quote='It is better to fail in originality, than to succeed in imitation. Failure is the true test of greatness' title={mostRecent.title} author={mostRecent.author}/>
+                            <Quote quote='It is better to fail in originality, than to succeed in imitation. Failure is the true test of greatness' title={mostRecentReadBook.title} author={mostRecentReadBook.author}/>
                         </View>
                             {/*it's necessary to bookDetail to be memoized object that does not change the link*/}
-                            <MemoMostRecentBookPresentation id={bookDetail.id} bookDetail={mostRecent} navigation={navigation} isMostRecent/>
+                            <MemoMostRecentBookPresentation onBookPress={onBookPress}/>
                     </Container>
 
                 <Tab
@@ -81,13 +100,13 @@ const Library = ({navigation}: any) => {
                         }}
                     >
                         <TabView.Item>
-                            <MemoBookList onBookPress={setMostRecent} books={stub}/>
+                            <MemoBookList onBookPress={onBookPress} books={books}/>
                         </TabView.Item>
                         <TabView.Item>
-                            <MemoBookList onBookPress={setMostRecent} books={stub}/>
+                            <MemoBookList onBookPress={onBookPress} books={favoriteBooks}/>
                         </TabView.Item>
                         <TabView.Item>
-                            <MemoBookList onBookPress={setMostRecent} books={stub}/>
+                            <MemoBookList onBookPress={onBookPress} books={finishedBooks}/>
                         </TabView.Item>
                     </TabView>
                 </View>

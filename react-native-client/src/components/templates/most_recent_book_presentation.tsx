@@ -2,28 +2,29 @@ import React, {useCallback, useContext} from 'react';
 import {View, StyleSheet, TouchableWithoutFeedback, Alert} from "react-native";
 import MemoBookItem, {IBookDetail} from "../organism/book-item";
 import {AppContext} from "../../app/app-context";
+import {useAppSelector} from "../../hooks";
+import {selectMostRecentReadBook, setMostRecentReadBook} from "../../redux/slices/booksSlice";
 
 
 interface IMostRecentBookPresentationProps{
-    navigation: any;
-    bookDetail: IBookDetail;
-    id: string
+    onBookPress: () => void;
 }
 
 
-const MostRecentBookPresentation: React.FC<IMostRecentBookPresentationProps> = ({id, bookDetail, navigation}) => {
+const MostRecentBookPresentation: React.FC<IMostRecentBookPresentationProps> = ({onBookPress}) => {
     const {windowSize} = useContext(AppContext)
+    const mostRecentReadBook: IBookDetail = useAppSelector(selectMostRecentReadBook);
 
     const readBook = useCallback((id: string) => {
-        Alert.alert('Read book', `Read book with id: ${id}`)
-    }, [navigation, id]);
+        Alert.alert('Read book', `Read book with id: ${mostRecentReadBook.id}`)
+    }, [mostRecentReadBook.id]);
 
 
     return (
-        <TouchableWithoutFeedback onPress={() => navigation.navigate('BookDetail', {id})}>
+        <TouchableWithoutFeedback onPress={() => onBookPress(mostRecentReadBook)}>
             <View style={[mostRecentBookStyle.mostRecentBookPresentationWrapper, {marginBottom: windowSize.width > 400 ? 20 : 0}]}>
                 <View style={{ maxWidth: windowSize.width > 400 ? 500 : '100%'}}>
-                    <MemoBookItem onButtonPress={readBook} bookDetail={bookDetail} isMostRecent/>
+                    <MemoBookItem onButtonPress={readBook} bookDetail={mostRecentReadBook} isMostRecent/>
                 </View>
             </View>
         </TouchableWithoutFeedback>

@@ -1,7 +1,8 @@
-import React, {useContext, useMemo} from "react";
+import React, { useMemo} from "react";
 import {TouchableNativeFeedback, View} from "react-native";
 import {getColors} from "../../consts";
-import {AppContext} from "../../app/app-context";
+import {useAppSelector} from "../../hooks";
+import {selectTheme} from "../../redux/slices/settingSlice";
 
 interface ISelectItemProps {
     children: React.ReactNode;
@@ -11,12 +12,12 @@ interface ISelectItemProps {
 }
 
 const SelectItem: React.FC<ISelectItemProps> = ({children, onPress, isActive, styles}) => {
-    const {theme, language} = useContext(AppContext);
+    const theme = useAppSelector(selectTheme)
     const colors =  useMemo(() => getColors(theme), [theme]);
 
     return (
         <View style={[internalStyles.roundParent, styles]}>
-            <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple(colors.touchAnimation, true)} style={{borderRadius: 10}} onPress={onPress}>
+            <TouchableNativeFeedback background={TouchableNativeFeedback.Ripple(colors.textPurpleBlue, true)} style={{borderRadius: 10}} onPress={onPress}>
                 <View style={[internalStyles.selectItem, {backgroundColor: colors.backgroundGrey}, isActive && {backgroundColor: colors.textPurpleBlue}]}>
                     {children}
                 </View>
@@ -34,7 +35,6 @@ const internalStyles = {
         marginBottom: 10,
     },
 
-
     selectItem: {
         flexDirection: 'row',
         justifyContent: 'center',
@@ -42,7 +42,6 @@ const internalStyles = {
         padding: 10,
         borderRadius: 10,
     },
-
 }
 
 

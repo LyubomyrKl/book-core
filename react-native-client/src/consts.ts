@@ -1,4 +1,6 @@
-export const getColors = (theme: 'light' | 'dark') => {
+export const getColors = (theme: 'light' | 'dark'):IColors => {
+
+
     return Object.freeze({
         textGrey: theme === 'light' ? '#5e5e5e' : '#b0b0b0',
         textBlack: theme === 'light' ? '#101010' : '#f0f0f0',
@@ -9,7 +11,25 @@ export const getColors = (theme: 'light' | 'dark') => {
 
         touchAnimation: theme === 'light' ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.1)',
 
+        white: '#fafafa',
+        gray: '#f0f0f0',
         darkShade: '#263143',
         green: '#5ab491'
     })
+}
+
+export interface IColors {
+    textGrey: string,
+    textBlack: string,
+    textPurpleBlue: string,
+
+    backgroundWhite: string,
+    backgroundGrey: string,
+
+    touchAnimation: string,
+
+    white: string,
+    gray: string,
+    darkShade: string,
+    green: string
 }

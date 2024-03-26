@@ -4,8 +4,9 @@ import {getColors} from "../../consts";
 import AppButton from "../atoms/button";
 import BookCover from "../molecules/book-cover";
 import {AppContext} from "../../app/app-context";
-
-
+import {useAppSelector} from "../../hooks";
+import {selectTheme} from "../../redux/slices/settingSlice";
+import ProgressBar from "../atoms/progress-bar";
 
 export interface IBookDetail {
     id: string;
@@ -13,7 +14,11 @@ export interface IBookDetail {
     author: string;
     cover: string;
     left: number;
-    pageNumber: number;
+    pageCount: number,
+    pagePassCount: number,
+    isFinished: false,
+    isFavorite: false
+
 }
 export interface IBookItemProps extends IBookDetail{
     onButtonPress: () => void;
@@ -23,14 +28,16 @@ export interface IBookItemProps extends IBookDetail{
 
 
 const BookItem: React.FC<IBookItemProps> = ({onButtonPress, bookDetail, isMostRecent = false}) => {
-    const {theme, windowSize} = useContext(AppContext)
+    const {windowSize} = useContext(AppContext)
+    const theme = useAppSelector(selectTheme)
     const colors = useMemo(() => getColors(theme), [theme])
+
+
     const percentProgress = useMemo(() => {
         return Math.round(bookDetail.pagePassCount / (bookDetail.pageCount / 100))
     }, [bookDetail.pagePassCount, bookDetail.pageCount])
 
     const titleFontSize  = !isMostRecent ? 20 : isMostRecent &&  windowSize.width  > 400 ? 28 : bookDetail.title.length > 20 ? 20 : 24
-
 
     return (
         <View style={styles.bookItemBox} onPress>
@@ -48,11 +55,7 @@ const BookItem: React.FC<IBookItemProps> = ({onButtonPress, bookDetail, isMostRe
                 <View>
                     <View style={{marginBottom: 10}}>
                         <Text style={[styles.bookReadLeftText, {color: colors.textBlack,}]}> {bookDetail.pagePassCount} / {bookDetail.pageCount} ({percentProgress}%)</Text>
-                        <View style={styles.progressBarBox}>
-                            <View style={[styles.progressBar, { height: isMostRecent ? 4 : 2, backgroundColor: colors.backgroundGrey,}]}>
-                                <View style={[styles.progressBar, { height: isMostRecent ? 4 : 2 , backgroundColor: colors.textPurpleBlue , width: `${percentProgress}%`,}]} />
-                            </View>
-                        </View>
+                        <ProgressBar isFatLine={isMostRecent} percentProgress={percentProgress}/>
                     </View>
                     {isMostRecent && <View>
                         <AppButton onPress={onButtonPress} title='Read'/>
@@ -81,7 +84,6 @@ const styles = StyleSheet.create({
         flex: 1,
     },
 
-
     bookTitle: {
         fontWeight: '700'
     },
@@ -93,18 +95,6 @@ const styles = StyleSheet.create({
     bookReadLeftText:{
         marginBottom: 10
     },
-
-    progressBarBox: {
-        display: 'flex',
-        flexDirection: 'row',
-    },
-
-    progressBar: {
-
-        width: '100%',
-
-    },
-
 });
 
 export default React.memo(BookItem);

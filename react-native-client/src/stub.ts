@@ -9,6 +9,8 @@ export default [
         left: 13,
         pageCount: 532,
         pagePassCount: 134,
+        isFinished: true,
+        isFavorite: false
     },
     {
         id: '2',
@@ -18,6 +20,8 @@ export default [
         left: 20,
         pageCount: 1225,
         pagePassCount: 306,
+        isFinished: false,
+        isFavorite: true
     },
     {
         id: '3',
@@ -27,6 +31,8 @@ export default [
         left: 8,
         pageCount: 180,
         pagePassCount: 45,
+        isFinished: true,
+        isFavorite: true
     },
     {
         id: '4',
@@ -36,6 +42,8 @@ export default [
         left: 5,
         pageCount: 328,
         pagePassCount: 82,
+        isFinished: false,
+        isFavorite: false
     },
     {
         id: '5',
@@ -45,6 +53,8 @@ export default [
         left: 11,
         pageCount: 224,
         pagePassCount: 56,
+        isFinished: true,
+        isFavorite: true
     },
     {
         id: '6',
@@ -54,6 +64,8 @@ export default [
         left: 15,
         pageCount: 281,
         pagePassCount: 70,
+        isFinished: false,
+        isFavorite: false
     },
     {
         id: '7',
@@ -63,6 +75,8 @@ export default [
         left: 25,
         pageCount: 310,
         pagePassCount: 78,
+        isFinished: true,
+        isFavorite: false
     },
     {
         id: '8',
@@ -72,6 +86,8 @@ export default [
         left: 18,
         pageCount: 1178,
         pagePassCount: 295,
+        isFinished: true,
+        isFavorite: true
     },
     {
         id: '9',
@@ -81,6 +97,8 @@ export default [
         left: 30,
         pageCount: 320,
         pagePassCount: 80,
+        isFinished: false,
+        isFavorite: true
     },
     {
         id: '10',
@@ -90,6 +108,8 @@ export default [
         left: 9,
         pageCount: 597,
         pagePassCount: 149,
+        isFinished: false,
+        isFavorite: false
     },
     {
         id: '11',
@@ -99,6 +119,8 @@ export default [
         left: 7,
         pageCount: 374,
         pagePassCount: 93,
+        isFinished: true,
+        isFavorite: true
     },
     {
         id: '12',
@@ -108,6 +130,8 @@ export default [
         left: 22,
         pageCount: 208,
         pagePassCount: 52,
+        isFinished: false,
+        isFavorite: false
     },
     {
         id: '13',
@@ -117,5 +141,7 @@ export default [
         left: 14,
         pageCount: 216,
         pagePassCount: 54,
+        isFinished: true,
+        isFavorite: false
     }
 ] as IBookDetail[];

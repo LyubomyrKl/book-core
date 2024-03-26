@@ -1,22 +1,29 @@
+import { useEffect, useMemo} from "react";
+
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
-import Profile from "../components/screens/profile";
-import Library from "../components/screens/library";
-import BookDetail from "../components/screens/book-detail";
 import {createStackNavigator} from "@react-navigation/stack";
+
 import Octicons from 'react-native-vector-icons/Octicons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+
 import {getColors} from "../consts";
-import Quotes from "../components/screens/quotes";
-import {useContext, useMemo} from "react";
-import {AppContext} from "./app-context";
+
+
+import Profile from "../screens/profile";
+import Library from "../screens/library";
+import BookDetail from "../screens/book-detail";
+import Quotes from "../screens/quotes";
+import {useAppDispatch, useAppSelector} from "../hooks";
+import {selectTheme, setTheme} from "../redux/slices/settingSlice";
+
 const AppStack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 function AppRoot() {
     return (
-        <AppStack.Navigator>
+        <AppStack.Navigator screenOptions={{animation: 'none'}}>
             <AppStack.Screen name={'Tabs'} options={{headerShown: false}}  component={Tabs}/>
-            <AppStack.Screen name={'BookDetail'} component={BookDetail} />
+            <AppStack.Screen options={{headerShown: false}} name={'BookDetails'} component={BookDetail} />
             <AppStack.Screen name={'Quotes'} component={Quotes} />
         </AppStack.Navigator>
     );
@@ -24,8 +31,14 @@ function AppRoot() {
 export default AppRoot;
 
 const Tabs = () => {
-    const {theme} = useContext(AppContext)
+    const dispatch = useAppDispatch();
+    const theme = useAppSelector(selectTheme);
+
     const colors = useMemo(() => getColors(theme), [theme]);
+
+    useEffect(() => {
+        dispatch(setTheme(theme));
+    }, [theme])
 
     return (
         <Tab.Navigator

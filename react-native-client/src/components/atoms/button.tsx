@@ -1,18 +1,21 @@
 import React, {useContext, useMemo, useState} from 'react';
 import {TouchableOpacity, Text, StyleSheet, useColorScheme, Animated} from "react-native";
+
+import {useAppSelector} from "../../hooks";
+import {selectTheme} from "../../redux/slices/settingSlice";
 import {getColors} from "../../consts";
-import {AppContext} from "../../app/app-context";
 
 interface IAppButton {
     title: string;
     onPress?: () => void;
     isDisabled?: boolean;
+    style?: Object;
 }
 
 const AppButton: React.FC<IAppButton> = (props) => {
-    const {title, onPress, isDisabled} = props;
+    const {title, onPress, isDisabled = false} = props;
     const [animation] = useState(new Animated.Value(1));
-    const {theme} = useContext(AppContext)
+    const theme = useAppSelector(selectTheme)
     const colors = useMemo(() => getColors(theme), [theme]);
     const handlePressIn = () => {
         Animated.spring(animation, {
@@ -32,14 +35,14 @@ const AppButton: React.FC<IAppButton> = (props) => {
 
     return (
             <TouchableOpacity
-                disabled={!isDisabled}
-                style={[styles.button, {backgroundColor: isDisabled ? '#bbbbbb' : theme === 'light' ? colors.textBlack : colors.darkShade}]}
+                disabled={isDisabled}
+                style={[styles.button, props.style, {backgroundColor: isDisabled ? '#bbbbbb' : theme === 'light' ? colors.textBlack : colors.darkShade}]}
                 onPress={onPress}
                 onPressIn={handlePressIn}
                 onPressOut={handlePressOut}
                 activeOpacity={1}
             >
-                <Animated.View style={ {transform: [{ scale: animation }]}}>
+                <Animated.View style={[{transform: [{ scale: animation }]}]}>
                     <Text style={[styles.buttonText]}>{title}</Text>
                 </Animated.View>
             </TouchableOpacity>

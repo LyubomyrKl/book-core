@@ -1,18 +1,20 @@
-import React, {useContext, useMemo} from 'react';
-import Svg, { Path, Circle, Rect, G} from 'react-native-svg';
+import React, { useMemo} from 'react';
+import Svg, { Path, Circle, G} from 'react-native-svg';
 
 import {Text, StyleSheet, View} from "react-native";
 import {getColors} from "../../consts";
-import {AppContext} from "../../app/app-context";
+import {useAppSelector} from "../../hooks";
+import {selectTheme} from "../../redux/slices/settingSlice";
 
 interface IQuote {
     quote: string;
     author: string;
     title: string;
+    small?: boolean;
 }
 
-const Quote = ({quote, author, title}:IQuote) => {
-    const {theme} = useContext(AppContext)
+const Quote = ({quote, author, title, small}:IQuote) => {
+    const theme = useAppSelector(selectTheme)
     const colors = useMemo(() => getColors(theme), [theme]);
 
     return (

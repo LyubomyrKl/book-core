@@ -1,8 +1,9 @@
-import React, {useContext, useMemo, useState} from 'react';
+import React, { useMemo, useState} from 'react';
 import { View, StyleSheet, Image} from "react-native";
 import {getColors} from "../../consts";
 import {Shadow} from 'react-native-shadow-2';
-import {AppContext} from "../../app/app-context";
+import {useAppSelector} from "../../hooks";
+import {selectTheme} from "../../redux/slices/settingSlice";
 
 
 interface IBookCoverProps {
@@ -12,7 +13,7 @@ interface IBookCoverProps {
 
 const BookCover: React.FC<IBookCoverProps> = ({uri, enableShadow = false}) => {
     const [width, setWidth] = useState(0);
-    const {theme} = useContext(AppContext)
+    const theme = useAppSelector(selectTheme)
 
     const colors = useMemo(() => getColors(theme), [theme]);
     const handleLayout = event => {
