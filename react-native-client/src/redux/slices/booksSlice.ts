@@ -3,8 +3,22 @@ import {IBookDetail} from "../../components/organism/book-item";
 import stub from "../../stub";
 import {RootState} from "../../hooks";
 
+
+// As init recent book
+// const emptyBook: IBookDetail = {
+//     id: 'empty-book',
+//     title: 'Add book to read',
+//     author: 'Select some book',
+//     cover: '',
+//     left: 0,
+//     pageCount: 0,
+//     pagePassCount: 0,
+//     isFinished: false,
+//     isFavorite: false
+// }
+
 interface IBookSliceInitialState {
-    mostRecentBook: IBookDetail | null,
+    mostRecentBook: IBookDetail,
     books: IBookDetail[]
 }
 
@@ -14,15 +28,12 @@ const initialState:IBookSliceInitialState = {
 }
 
 
-export const booksSlice = createSlice<IBookSliceInitialState>({
+export const booksSlice = createSlice({
     name: 'books',
     initialState,
     reducers: {
-        setMostRecentReadBook: (state, action) => {
+        setMostRecentReadBook: (state, action: PayloadAction<IBookDetail>) => {
             state.mostRecentBook = action.payload
-        },
-        getBook: (state, action: PayloadAction<string>) => {
-            return state.books.find(book => book.id === action.payload)
         },
         setBooks: (state, action) => {
             state.books = action.payload

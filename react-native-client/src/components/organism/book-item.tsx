@@ -16,20 +16,21 @@ export interface IBookDetail {
     left: number;
     pageCount: number,
     pagePassCount: number,
-    isFinished: false,
-    isFavorite: false
+    isFinished: boolean,
+    isFavorite: boolean
 
 }
-export interface IBookItemProps extends IBookDetail{
-    onButtonPress: () => void;
+export interface IBookItemProps {
+    onButtonPress?: (id:string) => void;
     isMostRecent?: boolean;
     bookDetail: IBookDetail;
 }
 
 
-const BookItem: React.FC<IBookItemProps> = ({onButtonPress, bookDetail, isMostRecent = false}) => {
+const BookItem: React.FC<IBookItemProps> = ({onButtonPress = () => {}, bookDetail, isMostRecent = false}) => {
     const {windowSize} = useContext(AppContext)
     const theme = useAppSelector(selectTheme)
+
     const colors = useMemo(() => getColors(theme), [theme])
 
 
@@ -37,10 +38,11 @@ const BookItem: React.FC<IBookItemProps> = ({onButtonPress, bookDetail, isMostRe
         return Math.round(bookDetail.pagePassCount / (bookDetail.pageCount / 100))
     }, [bookDetail.pagePassCount, bookDetail.pageCount])
 
+
     const titleFontSize  = !isMostRecent ? 20 : isMostRecent &&  windowSize.width  > 400 ? 28 : bookDetail.title.length > 20 ? 20 : 24
 
     return (
-        <View style={styles.bookItemBox} onPress>
+        <View style={styles.bookItemBox}>
             <View style={[styles.bookItemImageBoxStyle]}>
                 <BookCover uri={bookDetail.cover} enableShadow={!isMostRecent}/>
             </View>
@@ -58,7 +60,7 @@ const BookItem: React.FC<IBookItemProps> = ({onButtonPress, bookDetail, isMostRe
                         <ProgressBar isFatLine={isMostRecent} percentProgress={percentProgress}/>
                     </View>
                     {isMostRecent && <View>
-                        <AppButton onPress={onButtonPress} title='Read'/>
+                        <AppButton onPress={() => onButtonPress(bookDetail.id)} title='Read'/>
                     </View>}
                 </View>
             </View>

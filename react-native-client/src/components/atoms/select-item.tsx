@@ -1,5 +1,5 @@
 import React, { useMemo} from "react";
-import {TouchableNativeFeedback, View} from "react-native";
+import {TouchableNativeFeedback, View, StyleSheet} from "react-native";
 import {getColors} from "../../consts";
 import {useAppSelector} from "../../hooks";
 import {selectTheme} from "../../redux/slices/settingSlice";
@@ -27,7 +27,7 @@ const SelectItem: React.FC<ISelectItemProps> = ({children, onPress, isActive, st
 }
 
 
-const internalStyles = {
+const internalStyles = StyleSheet.create({
     roundParent: {
         borderRadius: 10,
         overflow: 'hidden',
@@ -42,7 +42,7 @@ const internalStyles = {
         padding: 10,
         borderRadius: 10,
     },
-}
+})
 
 
 export default React.memo(SelectItem);

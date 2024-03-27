@@ -6,7 +6,7 @@ import {useAppSelector} from "../../hooks";
 
 interface ProgressBarProps {
     isFatLine: boolean;
-    percentProgress?: number;
+    percentProgress: number;
 }
 
 const ProgressBar: React.FC<ProgressBarProps> = ({isFatLine, percentProgress}) => {

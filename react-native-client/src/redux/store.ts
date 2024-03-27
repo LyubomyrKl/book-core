@@ -1,4 +1,4 @@
-import {combineReducers, combineSlices, configureStore} from "@reduxjs/toolkit";
+import {combineReducers, configureStore} from "@reduxjs/toolkit";
 
 import {
     persistStore,
@@ -15,9 +15,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import bookReducer from "./slices/booksSlice";
 import settingReducer from "./slices/settingSlice";
+import quotesReducer from "./slices/quotesSlice";
+
 
 const migrations = {
-    1: (state) => {
+    1: (state: any) => {
         return {
             ...state,
             // Add 'mostRecentBook' field with default value
@@ -33,13 +35,14 @@ const persistConfig = {
     key: 'root',
     storage: AsyncStorage,
     migrate: createMigrate(migrations, { debug: false }),
-    whitelist: ['books'],
+    whitelist: ['books', 'settings', 'quotes'],
 }
 
 
 
 const persistedReducer = persistReducer(persistConfig, combineReducers({
     books: bookReducer,
+    quotes: quotesReducer,
     settings: settingReducer
 }));
 
@@ -56,5 +59,6 @@ const AppStore = configureStore({
 
 
 const persistor = persistStore(AppStore)
+persistor.purge();
 
 export { AppStore, persistor }

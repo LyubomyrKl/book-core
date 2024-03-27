@@ -1,5 +1,5 @@
 import React, {useContext, useMemo} from 'react';
-import {Animated, StyleSheet, View} from "react-native";
+import {Animated, ListRenderItemInfo, StyleSheet, View} from "react-native";
 import MemoBookItem, {IBookDetail} from "./book-item";
 import FlatList = Animated.FlatList;
 import {AppContext} from "../../app/app-context";
@@ -20,10 +20,12 @@ const BookList: React.FC<IBookListProps> = ({books, onBookPress}) => {
     const {windowSize} = useContext(AppContext);
     const theme = useAppSelector(selectTheme)
     const colors = useMemo(() => getColors(theme), [theme]);
-    const renderBookItem = ({item}) => (
+
+    const renderBookItem = ({item}: ListRenderItemInfo<IBookDetail>) => (
         // Todo: Add key to BookItem
         <View style={[styles.listItem, {  width: windowSize.width > 400 ? '50%' : '100%',}]}>
             <TouchableRipple rippleColor={colors.touchAnimation} style={{paddingRight: 30,}} onPress={() => onBookPress(item)} >
+                {/*@ts-ignore*/}
                 <MemoBookItem bookDetail={item}/>
             </TouchableRipple>
         </View>

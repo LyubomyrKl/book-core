@@ -1,9 +1,9 @@
-import React, {useContext, useMemo, useState} from 'react';
-import {ImageBackground, View, StyleSheet, TouchableWithoutFeedback, Alert, Animated, Text, ScrollView} from "react-native";
+import React, {useCallback, useContext, useMemo} from 'react';
+import {ImageBackground, View, StyleSheet, TouchableWithoutFeedback, Alert, Text, ScrollView} from "react-native";
 import  {IBookDetail} from "../components/organism/book-item";
 import {NativeStackScreenProps} from "@react-navigation/native-stack";
 import {LinearGradient} from "expo-linear-gradient";
-import BookCover from "../components/molecules/book-cover";
+import MemoBookCover from "../components/molecules/book-cover";
 import {getColors} from "../consts";
 import {AppContext} from "../app/app-context";
 import Container from "../components/molecules/container";
@@ -16,62 +16,75 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import Entypo from "react-native-vector-icons/Entypo";
 import DescriptionItem, {IDescriptionItemProps} from "../components/atoms/description-item";
 import {setMostRecentReadBook} from "../redux/slices/booksSlice";
-import BottomPopup from "../components/organism/bottom-popup";
+import {TQuoteFilter} from "./quotes";
 
 
-interface IBookDetailProps extends NativeStackScreenProps<{}, 'BookDetail'> {
+
+interface IBookDetailProps extends NativeStackScreenProps<{}, never> {
     book: IBookDetail
 }
 
 const BookDetail: React.FC<IBookDetailProps>= ({navigation, route}) => {
     const { windowSize} = useContext(AppContext)
     const dispatch = useAppDispatch();
-    const bookDetail: IBookDetail = route.params.book;
+    // @ts-ignore
+    const bookDetail: IBookDetail = route.params?.book;
     const theme = useAppSelector(selectTheme);
     const colors = useMemo(() => getColors(theme), [theme]);
+
+    const quotesQuotes = useAppSelector(state => state.quotes.quotes[bookDetail.id])
+    const favoriteQuotes = useAppSelector(state => state.quotes.favoriteQuotesIds[bookDetail.id])
 
     const percentProgress = useMemo(() => {
         return Math.round(bookDetail.pagePassCount / (bookDetail.pageCount / 100))
     }, [bookDetail.pagePassCount, bookDetail.pageCount])
 
-    const [isMenuVisible, setIsMenuVisible] = useState(true);
-    const onReadBook = () => {
-        dispatch(setMostRecentReadBook(bookDetail))
-        Alert.alert('Read book', `Read book with id: ${bookDetail.id}`)
-    }
+
+    const onReadBook = useCallback((bookDetail: IBookDetail) => {
+        dispatch(setMostRecentReadBook(bookDetail));
+
+        Alert.alert('Read book', `will navigate to read book with id ${bookDetail.id}`)
+        // navigation.navigate('ReadBook', {book: bookDetail})
+    }, []);
+
+
+    const openQuotes = useCallback((filter:TQuoteFilter, bookId: string) => {
+        // @ts-ignore
+        navigation.navigate('Quotes', {filter, bookId})
+    }, [])
+
 
     const quotesItems: IDescriptionItemProps[] = useMemo(() => (
         [
             {
                 title: 'Total Quotes',
                 icon: <Entypo name='quote' size={30} color='teal'/>,
-                value: '10',
-                onPress: () => navigation.navigate('Quote'),
+                value: quotesQuotes ? quotesQuotes.length.toString() : 'you have not quotes yet',
+                onPress: () => openQuotes('all', bookDetail.id),
                 pressable: true,
             },
             {
                 title: 'Favorite Quotes',
                 icon: <Ionicons name='heart-outline' size={30} color='purple'/>,
-                value: '3',
-                onPress: () => navigation.navigate('Quote'),
+                value: favoriteQuotes ? favoriteQuotes.length.toString() : 'you have not favorite quotes yet',
+                onPress: () => openQuotes('favorite', bookDetail.id),
                 pressable: true,
             },
             {
-                title: 'Recent Quotes',
+                title: 'View recent quotes',
                 icon: <Ionicons name='sparkles' size={30} color='yellow'/>,
-                value: 'View recent quotes',
-                onPress: () => navigation.navigate('Quote'),
+                value: quotesQuotes ? `"${quotesQuotes.slice(-1)[0].quote}"` : 'no recent quotes yet',
+                onPress: () => openQuotes('recent', bookDetail.id),
                 pressable: true,
             },
         ]
-    ), [])
+    ), [quotesQuotes, favoriteQuotes, bookDetail.id])
 
     const progressItems: IDescriptionItemProps[] = useMemo(() => (
         [
             {
                 title: 'Time spent on reading',
                 icon:  <Ionicons name='time-outline' size={30}  color="orange"/>,
-
                 value: '10h 30m'
             },
             {
@@ -99,87 +112,72 @@ const BookDetail: React.FC<IBookDetailProps>= ({navigation, route}) => {
                     start={{ x: 0, y: 0 }}
                     end={{ x: 0, y: 1 }}>
                 </LinearGradient>
-                <View style={{marginVertical: 35, marginHorizontal: 20, flexDirection: 'row', justifyContent: 'space-between'}}>
+                <View style={styles.header}>
                     <IconButton clickHandler={() => navigation.goBack()}>
                         <Ionicons name='arrow-back' size={24} color={colors.gray}/>
                     </IconButton>
-                    <IconButton clickHandler={() => setIsMenuVisible(() => true)}>
+                    <IconButton clickHandler={() => {}}>
                         <Entypo name='dots-three-vertical' size={20} color={colors.gray}/>
                     </IconButton>
                 </View>
-                <TouchableWithoutFeedback onPress={onReadBook}>
+                <TouchableWithoutFeedback onPress={() => onReadBook(bookDetail)}>
                     <View style={styles.background}>
                         <View style={{ width: windowSize.width > 400 ? 150 : 150, aspectRatio: 0.707}}>
-                            <BookCover uri={`${bookDetail.cover}`} enableShadow={true}/>
+                            <MemoBookCover uri={`${bookDetail.cover}`} enableShadow={true}/>
                         </View>
                     </View>
                 </TouchableWithoutFeedback>
             </ImageBackground>
 
-
-
             <Container>
-
-
-                <Text style={{
-                    fontWeight: 'bold',
+                <Text style={[styles.title, {
                     fontSize: windowSize.width > 400 ? 30 : 20,
                     color: colors.textBlack,
-                }}>{bookDetail.title}</Text>
-                <Text style={{
-                    fontWeight: 'semibold',
+                }]}>{bookDetail.title}</Text>
+                <Text style={[styles.author, {
                     fontSize: windowSize.width > 400 ? 16 : 14,
-                    color: colors.textGrey,
-                    marginBottom: 20
-                }}>{bookDetail.author}</Text>
+                    color: colors.textGrey
+                }]}>{bookDetail.author}</Text>
 
-                <View style={{marginBottom: -10}}>
+                <View style={styles.percentWrapper}>
                     <Text style={{ color: colors.textGrey}}>{percentProgress}%</Text>
                 </View>
-                <View style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    flexWrap: 'wrap',
-                    marginBottom: 10
-                }}>
+                <View style={styles.progressBarWrapper}>
                     <View style={{ flex: 1 }}>
                         <ProgressBar isFatLine percentProgress={percentProgress}/>
                     </View>
-                    <Text style={{marginLeft: 20, marginBottom: 20, color: colors.textGrey}}>{bookDetail.pagePassCount} / {bookDetail.pageCount}</Text>
+                    <Text style={[styles.counter, {color: colors.textGrey}]}>{bookDetail.pagePassCount} / {bookDetail.pageCount}</Text>
                     {windowSize.width > 400 ? (
-                        <AppButton key='read-button' onPress={onReadBook} style={{marginLeft: 40, width: 170}} title='Read' />
+                        <AppButton key='read-button' onPress={() => onReadBook(bookDetail)} style={styles.readButton} title='Read' />
                     ) : (
                         <View style={{ width: '100%' }}>
-                            <AppButton key='read-button' onPress={onReadBook} title='Read' />
+                            <AppButton key='read-button' onPress={() => onReadBook(bookDetail)} title='Read' />
                         </View>
                     )}
                 </View>
 
 
                 <View style={{marginBottom: 20}}>
-                    <Text style={{color: colors.textGrey, fontSize: 20, marginBottom: 10}}>Quotes</Text>
+                    <Text style={[styles.sectionTitle, {color: colors.textGrey}]}>Quotes</Text>
                     {quotesItems.map((props) => <DescriptionItem key={props.title} {...props}/>)}
                 </View>
 
                 <View style={{marginBottom: 20}}>
-                    <Text style={{color: colors.textGrey, fontSize: 20, marginBottom: 10}}>Progress</Text>
+                    <Text style={[styles.sectionTitle, {color: colors.textGrey}]}>Progress</Text>
                     {progressItems.map((props) => <DescriptionItem key={props.title} {...props}/>)}
                 </View>
 
                 <View style={{marginBottom: 20}}>
-                    <Text style={{color: colors.textGrey, fontSize: 20, marginBottom: 10}}>Summarization</Text>
+                    <Text style={[styles.sectionTitle, {color: colors.textGrey}]}>Summarization</Text>
                     <View style={{alignItems: 'center'}}>
-                        <Text style={{color: colors.textBlack, textTransform: 'uppercase', fontSize: 20}}>Coming soon</Text>
+                        <Text style={[styles.comingSoonText, {color: colors.textBlack}]}>Coming soon</Text>
                         <Ionicons name="hourglass-outline" size={150} color={colors.textGrey} />
-
                     </View>
                 </View>
             </Container>
         </ScrollView>
     );
 };
-
-
 
 
 
@@ -192,6 +190,53 @@ const styles = StyleSheet.create({
         bottom: 0,
     },
 
+    header: {
+        marginVertical: 35,
+        marginHorizontal: 20,
+        flexDirection: 'row',
+        justifyContent: 'space-between'
+    },
+
+    title: {
+        fontWeight: 'bold',
+    },
+
+    author: {
+        fontWeight: '600',
+
+        marginBottom: 20
+    },
+
+    percentWrapper: {marginBottom: -10},
+
+
+    progressBarWrapper: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        marginBottom: 10
+    },
+
+    counter: {
+        marginLeft: 20,
+        marginBottom: 20,
+    },
+
+    readButton: {
+        marginLeft: 40,
+        width: 170
+    },
+
+    sectionTitle: {
+        fontSize: 20,
+        marginBottom: 10
+    },
+
+    comingSoonText: {
+        textTransform: 'uppercase',
+        fontSize: 20
+    },
+
     background: {
         height: 300,
         width: '100%',
@@ -200,4 +245,4 @@ const styles = StyleSheet.create({
         marginTop: -20
     }
 })
-export default BookDetail;
+export default React.memo(BookDetail);

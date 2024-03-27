@@ -1,4 +1,4 @@
-import { useEffect, useMemo} from "react";
+import React, { useEffect, useMemo} from "react";
 
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import {createStackNavigator} from "@react-navigation/stack";
@@ -20,11 +20,15 @@ const AppStack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 function AppRoot() {
+
     return (
+        // @ts-ignore
         <AppStack.Navigator screenOptions={{animation: 'none'}}>
             <AppStack.Screen name={'Tabs'} options={{headerShown: false}}  component={Tabs}/>
-            <AppStack.Screen options={{headerShown: false}} name={'BookDetails'} component={BookDetail} />
-            <AppStack.Screen name={'Quotes'} component={Quotes} />
+            {/*// @ts-ignore*/}
+            <AppStack.Screen options={{headerShown: false}} name='BookDetails' component={BookDetail} />
+            {/*// @ts-ignore*/}
+            <AppStack.Screen options={{headerShown: false}} name='Quotes' component={Quotes} />
         </AppStack.Navigator>
     );
 }
@@ -61,7 +65,9 @@ const Tabs = () => {
 
             })}
         >
+            {/*// @ts-ignore*/}
             <Tab.Screen name="Library" options={{headerShown: false}} component={Library} />
+            {/*// @ts-ignore*/}
             <Tab.Screen name="Profile" options={{headerShown: false}} component={Profile} />
         </Tab.Navigator>
     );

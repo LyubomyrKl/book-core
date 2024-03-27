@@ -7,21 +7,23 @@ import {selectMostRecentReadBook, setMostRecentReadBook} from "../../redux/slice
 
 
 interface IMostRecentBookPresentationProps{
-    onBookPress: () => void;
+    onBookPress: (book: IBookDetail) => void;
 }
 
 
 const MostRecentBookPresentation: React.FC<IMostRecentBookPresentationProps> = ({onBookPress}) => {
     const {windowSize} = useContext(AppContext)
-    const mostRecentReadBook: IBookDetail = useAppSelector(selectMostRecentReadBook);
+    const mostRecentReadBook = useAppSelector(selectMostRecentReadBook);
+
 
     const readBook = useCallback((id: string) => {
-        Alert.alert('Read book', `Read book with id: ${mostRecentReadBook.id}`)
-    }, [mostRecentReadBook.id]);
+        Alert.alert('Read book', `Read book with id: ${id}`)
+    }, [mostRecentReadBook]);
+
 
 
     return (
-        <TouchableWithoutFeedback onPress={() => onBookPress(mostRecentReadBook)}>
+        <TouchableWithoutFeedback onPress={() => mostRecentReadBook && onBookPress(mostRecentReadBook)}>
             <View style={[mostRecentBookStyle.mostRecentBookPresentationWrapper, {marginBottom: windowSize.width > 400 ? 20 : 0}]}>
                 <View style={{ maxWidth: windowSize.width > 400 ? 500 : '100%'}}>
                     <MemoBookItem onButtonPress={readBook} bookDetail={mostRecentReadBook} isMostRecent/>

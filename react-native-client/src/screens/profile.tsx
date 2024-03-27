@@ -1,12 +1,11 @@
 // Imports organized alphabetically and grouped by type
-import React, { useCallback, useContext, useMemo, useState } from 'react';
-import { View, Text, FlatList } from 'react-native';
+import React, { useCallback, useMemo, useState } from 'react';
+import { View, Text, FlatList, StyleSheet} from 'react-native';
 import Svg, { Circle, ClipPath, Defs, G, Path } from 'react-native-svg';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 // Custom imports
-import { AppContext } from '../app/app-context';
 import Container from '../components/molecules/container';
 import AppButton from '../components/atoms/button';
 import SelectItem from '../components/atoms/select-item';
@@ -16,7 +15,7 @@ import { IColors, getColors } from '../consts';
 import {useAppDispatch, useAppSelector} from "../hooks";
 import {selectTheme, setTheme} from "../redux/slices/settingSlice";
 
-interface IProfileProps extends BottomTabScreenProps<{}, "Profile">{
+interface IProfileProps extends BottomTabScreenProps<{}, never>{
 
 }
 
@@ -89,7 +88,7 @@ const Profile: React.FC<IProfileProps>= () => {
 };
 
 
-const styles = {
+const styles = StyleSheet.create({
     profileContainer: {
         flex: 1,
         paddingHorizontal: 10,
@@ -121,10 +120,10 @@ const styles = {
     },
 
     requirementsItemTitle: {
-        fontWeight: 700,
+        fontWeight: '700',
         fontSize: 16,
     }
-}
+})
 
 interface ItemProps {
     title: string;
@@ -155,10 +154,15 @@ const requirements: ItemProps[] = [
 ];
 
 
-const languageButtons = [
+interface ILanguageButtons{
+    lang: TLanguage;
+    svg: React.ReactElement;
+}
+
+const languageButtons: ILanguageButtons[] = [
     {
         lang: 'UA',
-        svg: <Svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480">
+        svg: <Svg viewBox="0 0 640 480">
             <G fillRule="evenodd" strokeWidth="1pt">
                 <Path fill="gold" d="M0 0h640v480H0z"/>
                 <Path fill="#0057b8" d="M0 0h640v240H0z"/>
@@ -167,7 +171,7 @@ const languageButtons = [
     },
     {
         lang: 'EN',
-        svg: <Svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480">
+        svg: <Svg viewBox="0 0 640 480">
             <Path fill="#012169" d="M0 0h640v480H0z"/>
             <Path fill="#FFF" d="m75 0 244 181L562 0h78v62L400 241l240 178v61h-80L320 301 81 480H0v-60l239-178L0 64V0z"/>
             <Path fill="#C8102E" d="m424 281 216 159v40L369 281zm-184 20 6 35L54 480H0zM640 0v3L391 191l2-44L590 0zM0 0l239 176h-60L0 42z"/>
@@ -177,7 +181,7 @@ const languageButtons = [
     },
     {
         lang: 'GE',
-        svg: <Svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480">
+        svg: <Svg viewBox="0 0 640 480">
             <Path fill="#fc0" d="M0 320h640v160H0z"/>
             <Path fill="#000001" d="M0 0h640v160H0z"/>
             <Path fill="red" d="M0 160h640v160H0z"/>
@@ -185,7 +189,7 @@ const languageButtons = [
     },
     {
         lang: 'JP',
-        svg: <Svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480">
+        svg: <Svg viewBox="0 0 640 480">
             <Defs>
                 <ClipPath id="jp-a">
                     <Path fillOpacity=".7" d="M-88 32h640v480H-88z"/>

@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import {IBookDetail} from "../../components/organism/book-item";
+import {RootState} from "../../hooks";
 
 
 interface ISettingSliceInitialState {
@@ -18,7 +19,7 @@ const initialState:ISettingSliceInitialState = {
     height: 'normal',
 }
 
-export const settingsSlice = createSlice<IBookSliceInitialState>({
+export const settingsSlice = createSlice({
     name: 'settings',
     initialState: initialState,
     reducers: {
@@ -32,7 +33,7 @@ export const settingsSlice = createSlice<IBookSliceInitialState>({
     }
 })
 
-export const selectTheme = (state) => state.settings.theme
+export const selectTheme = (state: RootState) => state.settings.theme
 export const {modifySetting, setTheme} = settingsSlice.actions
 
 export default settingsSlice.reducer

@@ -1,5 +1,5 @@
-import React, { useMemo, useState} from 'react';
-import { View, StyleSheet, Image} from "react-native";
+import React, {useCallback, useMemo, useState} from 'react';
+import {View, StyleSheet, Image, LayoutChangeEvent} from "react-native";
 import {getColors} from "../../consts";
 import {Shadow} from 'react-native-shadow-2';
 import {useAppSelector} from "../../hooks";
@@ -16,11 +16,11 @@ const BookCover: React.FC<IBookCoverProps> = ({uri, enableShadow = false}) => {
     const theme = useAppSelector(selectTheme)
 
     const colors = useMemo(() => getColors(theme), [theme]);
-    const handleLayout = event => {
-        event.persist();
+
+    const handleLayout = useCallback((event: LayoutChangeEvent) => {
         const { width } = event.nativeEvent.layout;
-        setWidth(() => width);
-    };
+        setWidth(width); // Assuming setWidth is a state setter function
+    }, []);
 
 
     return (
@@ -41,6 +41,14 @@ const BookCover: React.FC<IBookCoverProps> = ({uri, enableShadow = false}) => {
                             blurRadius={100}
                             resizeMode="cover"
                         />
+                        {/*<FastImage*/}
+                        {/*    style={[styles.image]}*/}
+                        {/*    source={{*/}
+                        {/*        uri,*/}
+                        {/*        priority: FastImage.priority.normal,*/}
+                        {/*    }}*/}
+                        {/*    resizeMode={FastImage.resizeMode.cover}*/}
+                        {/*/>*/}
                     </View>
                     <View style={[styles.bookCoverItem, styles.list, {
                         borderColor: colors.backgroundGrey,

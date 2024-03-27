@@ -1,34 +1,49 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit'
-import {IBookDetail} from "../../components/organism/book-item";
-import stub from "../../stub";
-import {RootState} from "../../hooks";
+import {quotesStub} from "../../stub";
+
+
+export interface IQuote {
+    quoteId: string;
+    quote: string;
+}
 
 interface IQuotesSliceInitialState {
     quotes: {
-        [key: string]: [
-            {
-                id: string,
-                quote: string,
-            }
-        ]
+        [bookId: string]: IQuote[]
     },
-    favoriteQuotesIds: string[]
+
+    favoriteQuotesIds: {
+        [bookId: string]: string[]
+    },
+
+    filteredQuotes: IQuote[],
 }
 
 const initialState:IQuotesSliceInitialState = {
     quotes: {
-
-    }
+        '1': quotesStub
+    },
+    favoriteQuotesIds: {
+        '1': ["1", "2", "3", "9"]
+    },
+    filteredQuotes: [],
 }
 
-
-export const quotesSlice = createSlice<IBookSliceInitialState>({
+export const quotesSlice = createSlice({
     name: 'quotesSlice',
     initialState,
     reducers: {
-
+        setAllQuotes: (state, action: PayloadAction<string>) => {
+            state.filteredQuotes = state.quotes[action.payload]
+        },
+        setFavoriteQuotes: (state, action: PayloadAction<string>) => {
+            state.filteredQuotes = state.quotes[action.payload] ? state.quotes[action.payload].filter(quote => state.favoriteQuotesIds[action.payload].includes(quote.quoteId)) : []
+        },
+        setRecentQuotes: (state, action: PayloadAction<string>) => {
+            state.filteredQuotes = state.quotes[action.payload] ? state.quotes[action.payload].slice(-5).reverse() : []
+        },
     }
 })
 
-export const {} = quotesSlice.actions
+export const {setAllQuotes, setFavoriteQuotes, setRecentQuotes} = quotesSlice.actions
 export default quotesSlice.reducer

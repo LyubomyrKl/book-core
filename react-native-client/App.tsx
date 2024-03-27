@@ -15,13 +15,23 @@ import { persistor, AppStore } from './src/redux/store';
 
 const windowDimensions = Dimensions.get('window');
 
-const App = () => {;
+
+//Todo: add heart to favorite books
+//Todo: add sign to favorite quotes
+//Todo: make book settings
+//Todo: make quote settings
+//Todo: make Ebook reader
+//Todo: make pdf reader
+//Todo: implement AI summarizer
+
+
+const App = () => {
     const [windowSize, setWindowSize] = useState(windowDimensions);
 
     useEffect(() => {
         const subscription = Dimensions.addEventListener(
             'change',
-            ({window, screen}) => {
+            ({window}) => {
                 setWindowSize(window);
             },
         );
@@ -30,7 +40,9 @@ const App = () => {;
 
 
     useEffect(() => {
+        // @ts-ignore
         if (Text.defaultProps == null) Text.defaultProps = {};
+        // @ts-ignore
         Text.defaultProps.allowFontScaling = false;
     }, []);
 

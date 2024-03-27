@@ -1,10 +1,14 @@
 import React from 'react';
 import {View, StyleSheet} from "react-native";
 
-const Container: React.FC = (props) => {
+
+interface ContainerProps {
+    children: React.ReactNode;
+}
+const Container: React.FC<ContainerProps> = ({children}) => {
     return (
         <View style={container.container}>
-            {props.children}
+            {children}
         </View>
     );
 };

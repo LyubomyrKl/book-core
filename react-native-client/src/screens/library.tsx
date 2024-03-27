@@ -1,6 +1,6 @@
 // Imports organized alphabetically and grouped by type
 import React, { useCallback, useContext, useMemo, useState } from 'react';
-import { View, StyleSheet, ImageBackground } from 'react-native';
+import {View, StyleSheet, ImageBackground, TouchableWithoutFeedback} from 'react-native';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Tab, TabView } from '@rneui/themed';
@@ -11,7 +11,7 @@ import MemoBookList from '../components/organism/book-list';
 import {IBookDetail} from "../components/organism/book-item";
 import { AppContext } from '../app/app-context';
 import Container from '../components/molecules/container';
-import Quote from '../components/organism/quote';
+import LibraryQuote from '../components/organism/library-quote';
 
 // Selectors
 import {selectBooks, selectMostRecentReadBook} from "../redux/slices/booksSlice";
@@ -26,25 +26,38 @@ import {selectTheme} from "../redux/slices/settingSlice";
 
 
 
-interface ILibraryProps extends BottomTabScreenProps<{}, "Library">{
+interface ILibraryProps extends BottomTabScreenProps<{}, never>{
 
 }
 
 const Library: React.FC<ILibraryProps>= ({navigation}) => {
         const [index, setIndex] = useState<number>(0);
         const books: IBookDetail[] = useAppSelector(selectBooks);
-        const mostRecentReadBook: IBookDetail = useAppSelector(selectMostRecentReadBook);
+        const mostRecentReadBook  = useAppSelector(selectMostRecentReadBook);
+
+        const quotes = useAppSelector(state => state.quotes.quotes[mostRecentReadBook.id]);
         const theme = useAppSelector(selectTheme);
 
         const {windowSize} = useContext(AppContext);
-        const colors = useMemo<IColors>(() => getColors(theme), [theme]);
+        const colors = useMemo(() => {
+            return getColors(theme);
+        }, [theme]);
 
         const favoriteBooks = useMemo(() => books.filter(book => book.isFavorite), [books]);
         const finishedBooks = useMemo(() => books.filter(book => book.isFinished), [books]);
 
+
+
         const onBookPress = useCallback((book: IBookDetail) => {
+            // @ts-ignore
             navigation.navigate('BookDetails', {book})
         }, [])
+
+        const navigateToQuote = useCallback(() => {
+            // @ts-ignore
+            navigation.navigate('Quotes', {filter: 'all', bookId: mostRecentReadBook.id})
+        }, [])
+
 
         return (
             <View style={styles.libraryContainer}>
@@ -57,9 +70,12 @@ const Library: React.FC<ILibraryProps>= ({navigation}) => {
                     </LinearGradient>
                     <Container>
                         {/*Todo: select short quotes for mobile and long for tablets */}
-                        <View style={{marginTop: 20, marginBottom: windowSize > 400 ? 40 : 20 }}>
-                            <Quote quote='It is better to fail in originality, than to succeed in imitation. Failure is the true test of greatness' title={mostRecentReadBook.title} author={mostRecentReadBook.author}/>
-                        </View>
+                        <TouchableWithoutFeedback onPress={navigateToQuote}>
+                            <View style={{marginTop: 20, marginBottom: windowSize.width > 400 ? 40 : 20 }}>
+                                {quotes && quotes.length > 0 && <LibraryQuote quote={quotes.slice(-2)[0].quote} title={mostRecentReadBook.title}
+                                                                              author={mostRecentReadBook.author}/>}
+                            </View>
+                        </TouchableWithoutFeedback>
                             {/*it's necessary to bookDetail to be memoized object that does not change the link*/}
                             <MemoMostRecentBookPresentation onBookPress={onBookPress}/>
                     </Container>

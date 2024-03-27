@@ -1,13 +1,12 @@
 import React, {useMemo} from 'react';
 import {Text, TouchableNativeFeedback, View} from "react-native";
-import Ionicons from "react-native-vector-icons/Ionicons";
 import {useAppSelector} from "../../hooks";
 import {selectTheme} from "../../redux/slices/settingSlice";
 import {getColors} from "../../consts";
 
 export interface IDescriptionItemProps {
     title: string;
-    icon: string;
+    icon: React.ReactElement;
     value: string;
     pressable?: boolean;
     onPress?: () => void;
@@ -29,11 +28,11 @@ const DescriptionItem: React.FC<IDescriptionItemProps> =  ({title, icon, value, 
             <TouchableNativeFeedback  disabled={!pressable} background={TouchableNativeFeedback.Ripple(colors.textPurpleBlue, true)} style={{borderRadius: 10}} onPress={onPress}>
                 <View style={{
                     paddingVertical: 15,
-                    paddingHorizontal: 20,
+                    paddingLeft: 20,
+                    paddingRight: 50,
                     backgroundColor: colors.backgroundGrey,
                     alignItems: 'center',
                     borderRadius: 10,
-                    // marginBottom: 15,
                     flexDirection: 'row'
                 }}>
                     <View style={{marginRight: 10}}>

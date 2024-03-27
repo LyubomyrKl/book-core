@@ -1,5 +1,5 @@
-import React, {useContext, useMemo, useState} from 'react';
-import {TouchableOpacity, Text, StyleSheet, useColorScheme, Animated} from "react-native";
+import React, { useMemo, useState} from 'react';
+import {TouchableOpacity, Text, StyleSheet, Animated} from "react-native";
 
 import {useAppSelector} from "../../hooks";
 import {selectTheme} from "../../redux/slices/settingSlice";
