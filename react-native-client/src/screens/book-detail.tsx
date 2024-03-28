@@ -1,5 +1,14 @@
-import React, {useCallback, useContext, useMemo} from 'react';
-import {ImageBackground, View, StyleSheet, TouchableWithoutFeedback, Alert, Text, ScrollView} from "react-native";
+import React, {useCallback, useContext, useMemo, useRef, useState} from 'react';
+import {
+    ImageBackground,
+    View,
+    StyleSheet,
+    TouchableWithoutFeedback,
+    Alert,
+    Text,
+    ScrollView,
+    Animated
+} from "react-native";
 import  {IBookDetail} from "../components/organism/book-item";
 import {NativeStackScreenProps} from "@react-navigation/native-stack";
 import {LinearGradient} from "expo-linear-gradient";
@@ -17,6 +26,9 @@ import Entypo from "react-native-vector-icons/Entypo";
 import DescriptionItem, {IDescriptionItemProps} from "../components/atoms/description-item";
 import {setMostRecentReadBook} from "../redux/slices/booksSlice";
 import {TQuoteFilter} from "./quotes";
+import ModalMenu, {IModalMenuItem} from "../components/molecules/modal-menu";
+import AntDesign from "react-native-vector-icons/AntDesign";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 
 
@@ -27,8 +39,11 @@ interface IBookDetailProps extends NativeStackScreenProps<{}, never> {
 const BookDetail: React.FC<IBookDetailProps>= ({navigation, route}) => {
     const { windowSize} = useContext(AppContext)
     const dispatch = useAppDispatch();
+
+    const [modalVisible, setModalVisible] = useState(false);
+
     // @ts-ignore
-    const bookDetail: IBookDetail = route.params?.book;
+    const bookDetail = route.params?.book;
     const theme = useAppSelector(selectTheme);
     const colors = useMemo(() => getColors(theme), [theme]);
 
@@ -72,7 +87,7 @@ const BookDetail: React.FC<IBookDetailProps>= ({navigation, route}) => {
             },
             {
                 title: 'View recent quotes',
-                icon: <Ionicons name='sparkles' size={30} color='yellow'/>,
+                icon: <Ionicons name='sparkles' size={30} color='#f1c40f'/>,
                 value: quotesQuotes ? `"${quotesQuotes.slice(-1)[0].quote}"` : 'no recent quotes yet',
                 onPress: () => openQuotes('recent', bookDetail.id),
                 pressable: true,
@@ -84,22 +99,55 @@ const BookDetail: React.FC<IBookDetailProps>= ({navigation, route}) => {
         [
             {
                 title: 'Time spent on reading',
-                icon:  <Ionicons name='time-outline' size={30}  color="orange"/>,
+                icon:  <Ionicons name='time-outline' size={30}  color="#d35400"/>,
                 value: '10h 30m'
             },
             {
                 title: 'Last opened',
-                icon: <Ionicons name='book-outline' size={30} color='blue'/>,
+                icon: <Ionicons name='book-outline' size={30} color='#2980b9'/>,
                 value: '10 month ago'
             },
             {
                 title: 'Reading speed',
-                icon: <Ionicons name='speedometer-outline' size={30} color='red'/>,
+                icon: <Ionicons name='speedometer-outline' size={30} color='#c0392b'/>,
                 value: '0 words / min '
             },
         ]
     ), [])
 
+
+    const menuItems:IModalMenuItem[] = useMemo(() => ([
+            {
+                id: 'qwety-lkjhgf',
+                text: <Text style={{color: '#8e44ad'}}>Add to favorite</Text>,
+                onPress: () => Alert.alert('Add to favorite', 'will add to favorite'),
+                icon: <Ionicons name='heart' color='#8e44ad' size={30}/>
+            },
+            {
+                id: 'qwety-ldasdasd',
+                text: <Text style={{color: '#8f9fd5'}}>Add to finished</Text>,
+                onPress: () => Alert.alert('Add to finished', 'will add to finished'),
+                icon: <Entypo name='infinity' color='#8f9fd5' size={30}/>
+            },
+            {
+                id: 'qwety-dasd',
+                text: <Text style={{color: '#16a085'}}>Edit author</Text>,
+                onPress: () => Alert.alert('Edit author', 'will edit author'),
+                icon: <MaterialCommunityIcons name='human-edit' color='#16a085' size={30}/>
+            },
+            {
+                id: 'qwety-dadassd',
+                text: <Text style={{color: '#2980b9'}}>Edit title</Text>,
+                onPress: () => Alert.alert('Edit title', 'will edit title'),
+                icon: <MaterialCommunityIcons name='book-edit-outline' size={30} color='#2980b9'/>
+            },
+            {
+                id: 'qwety-dadahfssd',
+                text: <Text style={{color: 'red'}}>Delete book</Text>,
+                onPress: () => Alert.alert('Delete book', 'will delete book'),
+                icon: <AntDesign name='delete' size={30} color='red'/>
+            }
+    ]), [])
 
 
     return (
@@ -116,7 +164,7 @@ const BookDetail: React.FC<IBookDetailProps>= ({navigation, route}) => {
                     <IconButton clickHandler={() => navigation.goBack()}>
                         <Ionicons name='arrow-back' size={24} color={colors.gray}/>
                     </IconButton>
-                    <IconButton clickHandler={() => {}}>
+                    <IconButton clickHandler={() => setModalVisible(true)}>
                         <Entypo name='dots-three-vertical' size={20} color={colors.gray}/>
                     </IconButton>
                 </View>
@@ -157,17 +205,17 @@ const BookDetail: React.FC<IBookDetailProps>= ({navigation, route}) => {
                 </View>
 
 
-                <View style={{marginBottom: 20}}>
+                <View style={styles.sectionWrapper}>
                     <Text style={[styles.sectionTitle, {color: colors.textGrey}]}>Quotes</Text>
                     {quotesItems.map((props) => <DescriptionItem key={props.title} {...props}/>)}
                 </View>
 
-                <View style={{marginBottom: 20}}>
+                <View style={styles.sectionWrapper}>
                     <Text style={[styles.sectionTitle, {color: colors.textGrey}]}>Progress</Text>
                     {progressItems.map((props) => <DescriptionItem key={props.title} {...props}/>)}
                 </View>
 
-                <View style={{marginBottom: 20}}>
+                <View style={styles.sectionWrapper}>
                     <Text style={[styles.sectionTitle, {color: colors.textGrey}]}>Summarization</Text>
                     <View style={{alignItems: 'center'}}>
                         <Text style={[styles.comingSoonText, {color: colors.textBlack}]}>Coming soon</Text>
@@ -175,13 +223,50 @@ const BookDetail: React.FC<IBookDetailProps>= ({navigation, route}) => {
                     </View>
                 </View>
             </Container>
+
+            <ModalMenu
+                isModalVisible={modalVisible}
+                onOverlayPress={() => setModalVisible(false)}
+                onRequestClose={() => setModalVisible(false)}
+                extraHeader={<View >
+                    <Text style={[styles.modalExtraTitle, {
+                        color: colors.textBlack
+                    }]}>{bookDetail.title}</Text>
+                    <Text style={[styles.modalExtraSubtitle,{
+                        color: colors.textGrey
+                    }]}
+                    >
+                        {bookDetail.author}
+                    </Text>
+                </View>}
+                menuItems={menuItems}
+            />
+
+
         </ScrollView>
     );
 };
 
 
 
+
+
 const styles = StyleSheet.create({
+
+    modalExtraTitle: {
+        fontWeight: '600',
+        fontSize: 16
+    },
+
+    modalExtraSubtitle: {
+        fontWeight: '500',
+        // fontSize: 20,
+    },
+
+    sectionWrapper: {
+        marginBottom: 20
+    },
+
     gradient: {
         position: 'absolute',
         left: 0,
@@ -243,6 +328,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: -20
-    }
+    },
 })
 export default React.memo(BookDetail);

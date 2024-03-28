@@ -42,8 +42,28 @@ export const quotesSlice = createSlice({
         setRecentQuotes: (state, action: PayloadAction<string>) => {
             state.filteredQuotes = state.quotes[action.payload] ? state.quotes[action.payload].slice(-5).reverse() : []
         },
+
+        deleteQuote: (state, action: PayloadAction<{bookId: string, quoteId: string}>) => {
+            state.quotes[action.payload.bookId] = state.quotes[action.payload.bookId].filter(quote => quote.quoteId !== action.payload.quoteId)
+        },
+
+        addToFavorite: (state, action: PayloadAction<{bookId: string, quoteId: string}>) => {
+            state.favoriteQuotesIds[action.payload.bookId].push(action.payload.quoteId)
+        },
+
+        deleteFromFavorite: (state, action: PayloadAction<{bookId: string, quoteId: string}>) => {
+            state.favoriteQuotesIds[action.payload.bookId] = state.favoriteQuotesIds[action.payload.bookId].filter(quoteId => quoteId !== action.payload.quoteId)
+        }
     }
 })
 
-export const {setAllQuotes, setFavoriteQuotes, setRecentQuotes} = quotesSlice.actions
+export const {
+    setAllQuotes,
+    setFavoriteQuotes,
+    setRecentQuotes,
+    deleteQuote,
+    addToFavorite,
+    deleteFromFavorite
+
+} = quotesSlice.actions
 export default quotesSlice.reducer
